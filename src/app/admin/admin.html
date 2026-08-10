@@ -1406,7 +1406,7 @@
       <p><strong>Establecimiento:</strong> {{ fichaSeleccionada.establecimiento || '—' }}</p>
       <p><strong>Curso:</strong> {{ fichaSeleccionada.curso || '—' }}</p>
       <p><strong>Club amateur:</strong> {{ fichaSeleccionada.clubAmateur || '—' }}</p>
-      <p><strong>Equipo preferido:</strong> {{ fichaSeleccionada.equipoPreferido || '—' }}</p>
+      <p><strong>Equipo profesional preferido:</strong> {{ fichaSeleccionada.equipoPreferido || '—' }}</p>
       <p><strong>Jugador referente:</strong> {{ fichaSeleccionada.jugadorReferente || '—' }}</p>
       <p><strong>Actitud social:</strong> {{ fichaSeleccionada.actitudSocial || '—' }}</p>
       <p style="grid-column:1/-1;"><strong>Dirección:</strong> {{ fichaSeleccionada.direccion }}, {{ fichaSeleccionada.ciudad }}</p>
@@ -1537,7 +1537,7 @@
           <input pInputText [(ngModel)]="fichaEditandoForm.clubAmateur" style="width:100%;" />
         </div>
         <div style="display:flex;flex-direction:column;gap:0.2rem;">
-          <label style="font-weight:600;">Equipo preferido</label>
+          <label style="font-weight:600;">Equipo profesional preferido</label>
           <input pInputText [(ngModel)]="fichaEditandoForm.equipoPreferido" style="width:100%;" />
         </div>
         <div style="display:flex;flex-direction:column;gap:0.2rem;">

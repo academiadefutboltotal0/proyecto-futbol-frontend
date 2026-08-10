@@ -52,8 +52,6 @@ export class Inicio implements OnInit, AfterViewInit, OnDestroy {
 
   partidos: Partido[] = [];
 
-  profesores: any[] = [];
-
   constructor(private router: Router, private http: HttpClient, private cdr: ChangeDetectorRef, private zone: NgZone) {}
 
   ngOnInit(): void {
@@ -104,19 +102,10 @@ export class Inicio implements OnInit, AfterViewInit, OnDestroy {
       error: () => {},
     });
 
-    this.http.get<any[]>(`${this.apiUrl}/planteles`).subscribe({
-      next: (data) => {
-        this.zone.run(() => {
-          if (data && data.length > 0) this.profesores = data;
-          this.cdr.detectChanges();
-        });
-      },
-      error: () => {},
-    });
   }
 
   ngAfterViewInit(): void {
-    const sectionIds = ['noticias', 'partidos', 'galerias', 'planteles'];
+    const sectionIds = ['noticias', 'partidos', 'galerias'];
 
     this.observer = new IntersectionObserver(
       (entries) => {

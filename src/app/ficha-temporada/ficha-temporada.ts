@@ -234,6 +234,13 @@ export class FichaTemporadaComponent implements OnInit {
         if (msg.includes('utilizado') || msg.includes('expirado')) {
           this.estado = 'usado';
           this.mensajeError = msg;
+        } else if (err?.status === 409) {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'RUT duplicado',
+            detail: msg || 'Este jugador ya está registrado.',
+            life: 5000
+          });
         } else {
           this.messageService.add({
             severity: 'error',

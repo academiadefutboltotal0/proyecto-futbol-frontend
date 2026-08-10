@@ -98,12 +98,6 @@
     (click)="scrollTo('galerias')">
     Galería
   </button>
-  <button
-    type="button"
-    [class.active]="seccionActiva === 'planteles'"
-    (click)="scrollTo('planteles')">
-    Planteles
-  </button>
 </nav>
 
 <!-- ========= NOTICIAS ========= -->
@@ -218,33 +212,6 @@
 
     <ng-template #noGaleria>
       <p class="section-empty">No hay imágenes en la galería todavía.</p>
-    </ng-template>
-  </div>
-</section>
-
-<!-- ========= PLANTELES ========= -->
-<section id="planteles" class="content-section section-alt">
-  <div class="section-inner">
-    <h2 class="section-heading">Planteles &amp; Cuerpo Técnico</h2>
-
-    <div class="planteles-grid" *ngIf="profesores.length > 0; else noPlanteles">
-      <div class="plantel-card" *ngFor="let prof of profesores">
-        <div class="plantel-avatar">
-          <i class="pi pi-user"></i>
-        </div>
-        <div class="plantel-info">
-          <span class="plantel-nombre">{{ prof.nombre }}</span>
-          <span class="plantel-rol">{{ prof.especialidad || prof.rol || 'Entrenador' }}</span>
-          <span class="plantel-exp" *ngIf="prof.experiencia">{{ prof.experiencia }} de experiencia</span>
-          <div class="plantel-divisiones" *ngIf="prof.divisiones && prof.divisiones.length > 0">
-            <span class="division-tag" *ngFor="let div of prof.divisiones">{{ div }}</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <ng-template #noPlanteles>
-      <p class="section-empty">No hay información de plantel disponible.</p>
     </ng-template>
   </div>
 </section>

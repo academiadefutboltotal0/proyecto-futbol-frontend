@@ -259,6 +259,16 @@
   border: 1px solid var(--bdr);
 }
 
+.tag.beca {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  background: rgba(234,179,8,.14);
+  color: #b45309;
+  border-color: rgba(234,179,8,.4);
+}
+:host.dark .tag.beca { color: #facc15; }
+
 /* INFO GRID */
 .info-grid {
   display: grid;
