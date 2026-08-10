@@ -23,6 +23,7 @@ export class VistaClienteComponent implements OnInit {
   cargando = true;
   error = '';
   usuario: any = null;
+  tituloHeader = 'Escuela de Fútbol';
 
   pagosMensuales: any = null;
   pagosMensualesError = false;
@@ -51,6 +52,10 @@ export class VistaClienteComponent implements OnInit {
     const tema = localStorage.getItem('tema');
     this.temaOscuro = tema === 'dark';
     this.cargarFicha();
+    this.api.getConfig().subscribe({
+      next: (c: any) => { if (c?.tituloHeader) this.tituloHeader = c.tituloHeader; },
+      error: () => {}
+    });
   }
 
   cargarPagosMensuales(fichaId: string) {

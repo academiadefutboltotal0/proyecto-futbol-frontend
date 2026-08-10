@@ -34,6 +34,7 @@ export class VistaProfesorComponent implements OnInit {
   fichas: any[] = [];
   cargando = true;
   error = '';
+  tituloHeader = 'Escuela de Fútbol';
 
   tabActiva: 'jugadores' | 'asistencia' | 'rendimiento' = 'jugadores';
   divisionFiltro: string | null = null;
@@ -87,6 +88,10 @@ export class VistaProfesorComponent implements OnInit {
     this.usuario = this.auth.getUsuario();
     this.temaOscuro = localStorage.getItem('tema') === 'dark';
     this.cargarDatos();
+    this.api.getConfig().subscribe({
+      next: (c: any) => { if (c?.tituloHeader) this.tituloHeader = c.tituloHeader; },
+      error: () => {}
+    });
   }
 
   cargarDatos() {
