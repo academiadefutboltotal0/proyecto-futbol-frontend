@@ -469,9 +469,10 @@ export class AdminComponent implements OnInit {
 
   abrirModalPartido(p?: any) {
     this.partidoEditando = p || null;
+    const nombreClub = this.siteConfig.tituloHeader || 'Santiago Wanderers';
     this.partidoForm = p
-      ? { local: p.local || 'Santiago Wanderers', visitante: p.visitante, fecha: p.fecha || '', hora: p.hora || '', resultado: p.resultado || '', sede: p.sede || '', tipo: p.tipo || 'proximo' }
-      : { local: 'Santiago Wanderers', visitante: '', fecha: '', hora: '', resultado: '', sede: '', tipo: 'proximo' };
+      ? { local: p.local || nombreClub, visitante: p.visitante, fecha: p.fecha || '', hora: p.hora || '', resultado: p.resultado || '', sede: p.sede || '', tipo: p.tipo || 'proximo' }
+      : { local: nombreClub, visitante: '', fecha: '', hora: '', resultado: '', sede: '', tipo: 'proximo' };
     this.modalPartidoVisible = true;
   }
 
