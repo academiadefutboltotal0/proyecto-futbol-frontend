@@ -59,7 +59,7 @@ export class PagosService {
     return this.http.post<PagoMongoResponse>(this.apiUrl, {
       ...payload,
       estado: 'pendiente',
-    }).pipe(map(fromMongoPago));
+    }, this.authHeaders()).pipe(map(fromMongoPago));
   }
 
   getPagosPendientes(): Observable<Pago[]> {
