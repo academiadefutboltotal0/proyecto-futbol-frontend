@@ -97,6 +97,14 @@ export class FichaTemporadaComponent implements OnInit {
       ciudad:          ['', Validators.required],
       sede:            ['', Validators.required],
 
+      horarioSalidaColegio: this.fb.group({
+        lunes:     [''],
+        martes:    [''],
+        miercoles: [''],
+        jueves:    [''],
+        viernes:   [''],
+      }),
+
       apoderado: this.fb.group({
         nombre:  ['', Validators.required],
         correo:  ['', [Validators.required, Validators.email]],

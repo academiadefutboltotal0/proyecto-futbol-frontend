@@ -240,6 +240,42 @@ export class AdminComponent implements OnInit {
     });
   }
 
+  /* ── PROMEDIO HORARIO DE SALIDA DEL COLEGIO ──────── */
+  modalPromedioSalidaVisible = false;
+  promedioSalidaData: { dia: string; promedio: string; cantidad: number }[] = [];
+
+  private minutosDesdeHora(hora: string): number | null {
+    if (!hora) return null;
+    const [h, m] = hora.split(':').map(Number);
+    if (isNaN(h) || isNaN(m)) return null;
+    return h * 60 + m;
+  }
+
+  private horaDesdeMinutos(mins: number): string {
+    const h = Math.floor(mins / 60);
+    const m = Math.round(mins % 60);
+    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+  }
+
+  verPromedioSalida() {
+    const dias: { key: 'lunes' | 'martes' | 'miercoles' | 'jueves' | 'viernes'; label: string }[] = [
+      { key: 'lunes', label: 'Lunes' },
+      { key: 'martes', label: 'Martes' },
+      { key: 'miercoles', label: 'Miércoles' },
+      { key: 'jueves', label: 'Jueves' },
+      { key: 'viernes', label: 'Viernes' },
+    ];
+    this.promedioSalidaData = dias.map(({ key, label }) => {
+      const minutos = this.fichas
+        .map((f: any) => this.minutosDesdeHora(f.horarioSalidaColegio?.[key]))
+        .filter((m): m is number => m !== null);
+      if (!minutos.length) return { dia: label, promedio: '—', cantidad: 0 };
+      const promedio = minutos.reduce((a, b) => a + b, 0) / minutos.length;
+      return { dia: label, promedio: this.horaDesdeMinutos(promedio), cantidad: minutos.length };
+    });
+    this.modalPromedioSalidaVisible = true;
+  }
+
   ejecutarMigracionCSV() {
     if (this.migracionEnCurso) return;
     this.migracionEnCurso = true;
@@ -807,6 +843,13 @@ export class AdminComponent implements OnInit {
       clubAmateur: ficha.clubAmateur || '',
       equipoPreferido: ficha.equipoPreferido || '',
       jugadorReferente: ficha.jugadorReferente || '',
+      horarioSalidaColegio: {
+        lunes: ficha.horarioSalidaColegio?.lunes || '',
+        martes: ficha.horarioSalidaColegio?.martes || '',
+        miercoles: ficha.horarioSalidaColegio?.miercoles || '',
+        jueves: ficha.horarioSalidaColegio?.jueves || '',
+        viernes: ficha.horarioSalidaColegio?.viernes || '',
+      },
       talla: ficha.talla || '',
       nombreCamiseta: ficha.nombreCamiseta || '',
       posicion: ficha.posicion || '',

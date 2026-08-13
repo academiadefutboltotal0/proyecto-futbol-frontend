@@ -967,6 +967,13 @@
         (onClick)="normalizarSedes()">
       </p-button>
       <span *ngIf="normalizacionResultado" style="font-size:.82rem;color:#39d353;">{{ normalizacionResultado }}</span>
+      <p-button
+        label="Promedio de salida del colegio"
+        icon="pi pi-clock"
+        severity="secondary"
+        size="small"
+        (onClick)="verPromedioSalida()">
+      </p-button>
     </div>
 
     <div class="filter-bar">
@@ -1412,6 +1419,13 @@
       <p style="grid-column:1/-1;"><strong>Dirección:</strong> {{ fichaSeleccionada.direccion }}, {{ fichaSeleccionada.ciudad }}</p>
       <p style="grid-column:1/-1;" *ngIf="fichaSeleccionada.otrosDeportes"><strong>Otros deportes:</strong> {{ fichaSeleccionada.otrosDeportes }}</p>
       <p style="grid-column:1/-1;" *ngIf="fichaSeleccionada.actitudAdversidad"><strong>Ante adversidad:</strong> {{ fichaSeleccionada.actitudAdversidad }}</p>
+      <p style="grid-column:1/-1;"><strong>Horario de salida del colegio:</strong>
+        Lun {{ fichaSeleccionada.horarioSalidaColegio?.lunes || '—' }} ·
+        Mar {{ fichaSeleccionada.horarioSalidaColegio?.martes || '—' }} ·
+        Mié {{ fichaSeleccionada.horarioSalidaColegio?.miercoles || '—' }} ·
+        Jue {{ fichaSeleccionada.horarioSalidaColegio?.jueves || '—' }} ·
+        Vie {{ fichaSeleccionada.horarioSalidaColegio?.viernes || '—' }}
+      </p>
     </div>
 
     <div style="border-top:1px solid rgba(57,211,83,0.2); padding-top:1rem;">
@@ -1543,6 +1557,32 @@
         <div style="display:flex;flex-direction:column;gap:0.2rem;">
           <label style="font-weight:600;">Jugador referente</label>
           <input pInputText [(ngModel)]="fichaEditandoForm.jugadorReferente" style="width:100%;" />
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h4 style="margin:0 0 0.75rem; color:#39d353;">Horario de salida del colegio</h4>
+      <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr 1fr; gap:0.75rem;">
+        <div style="display:flex;flex-direction:column;gap:0.2rem;">
+          <label style="font-weight:600;">Lunes</label>
+          <input pInputText type="time" [(ngModel)]="fichaEditandoForm.horarioSalidaColegio.lunes" style="width:100%;" />
+        </div>
+        <div style="display:flex;flex-direction:column;gap:0.2rem;">
+          <label style="font-weight:600;">Martes</label>
+          <input pInputText type="time" [(ngModel)]="fichaEditandoForm.horarioSalidaColegio.martes" style="width:100%;" />
+        </div>
+        <div style="display:flex;flex-direction:column;gap:0.2rem;">
+          <label style="font-weight:600;">Miércoles</label>
+          <input pInputText type="time" [(ngModel)]="fichaEditandoForm.horarioSalidaColegio.miercoles" style="width:100%;" />
+        </div>
+        <div style="display:flex;flex-direction:column;gap:0.2rem;">
+          <label style="font-weight:600;">Jueves</label>
+          <input pInputText type="time" [(ngModel)]="fichaEditandoForm.horarioSalidaColegio.jueves" style="width:100%;" />
+        </div>
+        <div style="display:flex;flex-direction:column;gap:0.2rem;">
+          <label style="font-weight:600;">Viernes</label>
+          <input pInputText type="time" [(ngModel)]="fichaEditandoForm.horarioSalidaColegio.viernes" style="width:100%;" />
         </div>
       </div>
     </div>
@@ -1770,6 +1810,30 @@
     </ng-container>
     <div style="display:flex; justify-content:flex-end;">
       <p-button label="Cerrar" severity="secondary" (onClick)="modalRendimientoVisible=false"></p-button>
+    </div>
+  </div>
+</p-dialog>
+
+<!-- MODAL PROMEDIO HORARIO DE SALIDA DEL COLEGIO -->
+<p-dialog
+  header="Promedio de salida del colegio"
+  [(visible)]="modalPromedioSalidaVisible"
+  [modal]="true"
+  appendTo="body"
+  [style]="{ width: 'min(95vw, 480px)' }"
+  [draggable]="false"
+  [resizable]="false">
+  <div style="display:flex; flex-direction:column; gap:1.25rem;">
+    <p style="font-size:0.85rem; opacity:0.7; margin:0;">Promedio calculado sobre los jugadores que tienen ese día registrado. Útil para saber a qué hora podría empezar el entrenamiento cada día.</p>
+    <div style="display:flex; flex-direction:column; gap:0.5rem;">
+      <div *ngFor="let d of promedioSalidaData" style="display:grid; grid-template-columns:1fr auto auto; gap:0.75rem; align-items:center; padding:0.6rem 0.85rem; background:rgba(57,211,83,0.05); border:1px solid rgba(57,211,83,0.15); border-radius:8px;">
+        <span style="font-weight:600;">{{ d.dia }}</span>
+        <span style="color:#39d353; font-weight:700; font-size:1.05rem;">{{ d.promedio }}</span>
+        <span style="font-size:0.78rem; opacity:0.6;">{{ d.cantidad }} jugador{{ d.cantidad === 1 ? '' : 'es' }}</span>
+      </div>
+    </div>
+    <div style="display:flex; justify-content:flex-end;">
+      <p-button label="Cerrar" severity="secondary" (onClick)="modalPromedioSalidaVisible=false"></p-button>
     </div>
   </div>
 </p-dialog>
