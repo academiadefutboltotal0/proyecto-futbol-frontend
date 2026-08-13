@@ -1424,7 +1424,9 @@
         Mar {{ fichaSeleccionada.horarioSalidaColegio?.martes || '—' }} ·
         Mié {{ fichaSeleccionada.horarioSalidaColegio?.miercoles || '—' }} ·
         Jue {{ fichaSeleccionada.horarioSalidaColegio?.jueves || '—' }} ·
-        Vie {{ fichaSeleccionada.horarioSalidaColegio?.viernes || '—' }}
+        Vie {{ fichaSeleccionada.horarioSalidaColegio?.viernes || '—' }} ·
+        Sáb {{ fichaSeleccionada.horarioSalidaColegio?.sabado || '—' }} ·
+        Dom {{ fichaSeleccionada.horarioSalidaColegio?.domingo || '—' }}
       </p>
     </div>
 
@@ -1563,7 +1565,7 @@
 
     <div>
       <h4 style="margin:0 0 0.75rem; color:#39d353;">Horario de salida del colegio</h4>
-      <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr 1fr; gap:0.75rem;">
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(110px, 1fr)); gap:0.75rem;">
         <div style="display:flex;flex-direction:column;gap:0.2rem;">
           <label style="font-weight:600;">Lunes</label>
           <input pInputText type="time" [(ngModel)]="fichaEditandoForm.horarioSalidaColegio.lunes" style="width:100%;" />
@@ -1583,6 +1585,14 @@
         <div style="display:flex;flex-direction:column;gap:0.2rem;">
           <label style="font-weight:600;">Viernes</label>
           <input pInputText type="time" [(ngModel)]="fichaEditandoForm.horarioSalidaColegio.viernes" style="width:100%;" />
+        </div>
+        <div style="display:flex;flex-direction:column;gap:0.2rem;">
+          <label style="font-weight:600;">Sábado</label>
+          <input pInputText type="time" [(ngModel)]="fichaEditandoForm.horarioSalidaColegio.sabado" style="width:100%;" />
+        </div>
+        <div style="display:flex;flex-direction:column;gap:0.2rem;">
+          <label style="font-weight:600;">Domingo</label>
+          <input pInputText type="time" [(ngModel)]="fichaEditandoForm.horarioSalidaColegio.domingo" style="width:100%;" />
         </div>
       </div>
     </div>

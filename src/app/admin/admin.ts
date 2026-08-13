@@ -258,12 +258,14 @@ export class AdminComponent implements OnInit {
   }
 
   verPromedioSalida() {
-    const dias: { key: 'lunes' | 'martes' | 'miercoles' | 'jueves' | 'viernes'; label: string }[] = [
+    const dias: { key: 'lunes' | 'martes' | 'miercoles' | 'jueves' | 'viernes' | 'sabado' | 'domingo'; label: string }[] = [
       { key: 'lunes', label: 'Lunes' },
       { key: 'martes', label: 'Martes' },
       { key: 'miercoles', label: 'Miércoles' },
       { key: 'jueves', label: 'Jueves' },
       { key: 'viernes', label: 'Viernes' },
+      { key: 'sabado', label: 'Sábado' },
+      { key: 'domingo', label: 'Domingo' },
     ];
     this.promedioSalidaData = dias.map(({ key, label }) => {
       const minutos = this.fichas
@@ -849,6 +851,8 @@ export class AdminComponent implements OnInit {
         miercoles: ficha.horarioSalidaColegio?.miercoles || '',
         jueves: ficha.horarioSalidaColegio?.jueves || '',
         viernes: ficha.horarioSalidaColegio?.viernes || '',
+        sabado: ficha.horarioSalidaColegio?.sabado || '',
+        domingo: ficha.horarioSalidaColegio?.domingo || '',
       },
       talla: ficha.talla || '',
       nombreCamiseta: ficha.nombreCamiseta || '',
