@@ -178,25 +178,13 @@
       <div class="seccion">
         <h3>Horario de salida del colegio</h3>
         <div formGroupName="horarioSalidaColegio" class="grid">
-          <div class="campo">
-            <label>Lunes</label>
-            <input pInputText type="time" formControlName="lunes" />
-          </div>
-          <div class="campo">
-            <label>Martes</label>
-            <input pInputText type="time" formControlName="martes" />
-          </div>
-          <div class="campo">
-            <label>Miércoles</label>
-            <input pInputText type="time" formControlName="miercoles" />
-          </div>
-          <div class="campo">
-            <label>Jueves</label>
-            <input pInputText type="time" formControlName="jueves" />
-          </div>
-          <div class="campo">
-            <label>Viernes</label>
-            <input pInputText type="time" formControlName="viernes" />
+          <div class="campo" *ngFor="let d of diasSemana">
+            <label>{{ d.label }}</label>
+            <input pInputText type="time" [formControlName]="d.dia" />
+            <label style="display:flex; align-items:center; gap:0.4rem; font-weight:400; margin-top:0.3rem;">
+              <input type="checkbox" [(ngModel)]="sinColegio[d.dia]" [ngModelOptions]="{standalone:true}" (change)="toggleSinColegio(d.dia)" />
+              No tiene colegio ese día
+            </label>
           </div>
         </div>
       </div>

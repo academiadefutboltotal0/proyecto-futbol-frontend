@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import {
   ReactiveFormsModule,
+  FormsModule,
   FormBuilder,
   FormGroup,
   Validators
@@ -25,6 +26,7 @@ import { ToastModule } from 'primeng/toast';
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    FormsModule,
     CardModule,
     InputTextModule,
     SelectModule,
@@ -39,6 +41,25 @@ export class FichaTemporadaComponent implements OnInit {
   formulario!: FormGroup;
   enviando = false;
   categoriaSugerida = '';
+
+  diasSemana: { dia: string; label: string }[] = [
+    { dia: 'lunes', label: 'Lunes' },
+    { dia: 'martes', label: 'Martes' },
+    { dia: 'miercoles', label: 'Miércoles' },
+    { dia: 'jueves', label: 'Jueves' },
+    { dia: 'viernes', label: 'Viernes' },
+    { dia: 'sabado', label: 'Sábado' },
+    { dia: 'domingo', label: 'Domingo' },
+  ];
+  sinColegio: Record<string, boolean> = {
+    lunes: false, martes: false, miercoles: false, jueves: false, viernes: false, sabado: false, domingo: false,
+  };
+
+  toggleSinColegio(dia: string) {
+    if (this.sinColegio[dia]) {
+      this.formulario.get(`horarioSalidaColegio.${dia}`)?.setValue('');
+    }
+  }
 
   token = '';
   estado: 'cargando' | 'valido' | 'invalido' | 'expirado' | 'usado' | 'enviado' = 'cargando';
@@ -103,6 +124,8 @@ export class FichaTemporadaComponent implements OnInit {
         miercoles: [''],
         jueves:    [''],
         viernes:   [''],
+        sabado:    [''],
+        domingo:   [''],
       }),
 
       apoderado: this.fb.group({
