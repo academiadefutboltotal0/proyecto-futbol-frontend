@@ -46,6 +46,10 @@ export class Inicio implements OnInit, AfterViewInit, OnDestroy {
     return this.siteConfig.imagenDestacada || 'media/KevinVasquez.png';
   }
 
+  get galeriaNumVisible(): number {
+    return Math.max(1, Math.min(this.siteConfig.imagenesGaleria.length, 5));
+  }
+
   private readonly apiUrl = environment.apiUrl;
 
   noticias: Noticia[] = [];
