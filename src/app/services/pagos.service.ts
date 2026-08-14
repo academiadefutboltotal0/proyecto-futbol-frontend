@@ -63,7 +63,8 @@ export class PagosService {
   }
 
   getPagosPendientes(): Observable<Pago[]> {
-    return this.http.get<PagoMongoResponse[]>(`${this.apiUrl}?estado=pendiente`, this.authHeaders()).pipe(
+    // Incluye los rechazados para que no "desaparezcan" — quedan visibles para revisar/re-aprobar.
+    return this.http.get<PagoMongoResponse[]>(`${this.apiUrl}?estado=pendiente,rechazado`, this.authHeaders()).pipe(
       map((pagos) => pagos.map(fromMongoPago))
     );
   }

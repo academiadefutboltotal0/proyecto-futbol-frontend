@@ -148,6 +148,14 @@ export class ApiService {
     return this.http.get<{ valido: boolean }>(`${this.apiUrl}/invitacion/${token}`);
   }
 
+  validarActivacionCuenta(token: string): Observable<{ valido: boolean; email: string; nombre: string }> {
+    return this.http.get<any>(`${this.apiUrl}/activar-cuenta/${token}`);
+  }
+
+  activarCuenta(token: string, passwordNueva: string): Observable<{ mensaje: string }> {
+    return this.http.post<any>(`${this.apiUrl}/activar-cuenta/${token}`, { passwordNueva });
+  }
+
   getMiFicha(): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/cliente/mi-ficha`, this.authHeaders);
   }

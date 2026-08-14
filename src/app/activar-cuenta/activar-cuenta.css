@@ -1,0 +1,84 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  font-family: 'Trebuchet MS', 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #85afef, #2563eb);
+  color: #1f2937;
+}
+
+.estado-wrap {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.estado-card {
+  background: #fff;
+  border-radius: 18px;
+  padding: 52px 44px;
+  text-align: center;
+  max-width: 440px;
+  width: 100%;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.18);
+}
+
+.estado-card.estado-error { border-top: 5px solid #b91c1c; }
+.estado-card.estado-ok    { border-top: 5px solid #2563eb; }
+
+.estado-icon {
+  font-size: 3.2rem;
+  margin-bottom: 18px;
+  display: block;
+}
+
+.estado-error .estado-icon { color: #b91c1c; }
+.estado-ok    .estado-icon { color: #2563eb; }
+.estado-card h2 { margin: 0 0 10px; font-size: 1.45rem; color: #1a1a2e; }
+.estado-card p  { color: #555; line-height: 1.55; margin: 0; }
+
+.req { color: #b91c1c; }
+
+.form-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 40px 20px 60px;
+}
+
+.card {
+  width: min(420px, 100%);
+  padding: 32px;
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.16);
+}
+
+.card h1 {
+  margin: 0 0 6px;
+  color: #1a1a2e;
+}
+
+.subtitulo {
+  color: #2563eb;
+  font-size: 0.95rem;
+  margin-bottom: 1.5rem;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+label {
+  font-weight: 700;
+  color: #0f1a3e;
+  font-size: 0.95rem;
+}
+
+.error {
+  color: #b91c1c;
+  font-size: 0.85rem;
+}

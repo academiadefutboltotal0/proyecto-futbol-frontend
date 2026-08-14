@@ -52,7 +52,7 @@
     <div class="hero-fallback">
       <img [src]="imgDestacada" alt="Imagen destacada del club" />
       <div class="hero-overlay">
-        <span class="hero-kicker">Escuela Familias del Fútbol</span>
+        <span class="hero-kicker">{{ siteConfig.kickerHero }}</span>
         <ng-container *ngIf="configCargada; else heroSkeleton">
           <h1 class="hero-title">{{ siteConfig.tituloBienvenida }}</h1>
           <p class="hero-sub">{{ siteConfig.subtituloBienvenida }}</p>
@@ -162,8 +162,11 @@
           </span>
           <span class="partido-fecha">
             {{ partido.fecha | date:'dd/MM/yyyy' }}
-            <ng-container *ngIf="partido.hora">&nbsp;{{ partido.hora }}</ng-container>
           </span>
+        </div>
+
+        <div class="partido-sede" *ngIf="partido.sede">
+          <i class="pi pi-map-marker"></i> {{ partido.sede }}
         </div>
 
         <div class="partido-teams">
@@ -174,9 +177,9 @@
           <span class="team">{{ partido.visitante }}</span>
         </div>
 
-        <div class="partido-footer" *ngIf="partido.sede">
-          <i class="pi pi-map-marker"></i>
-          {{ partido.sede }}
+        <div class="partido-footer" *ngIf="partido.hora || partido.horaCitacion">
+          <span *ngIf="partido.horaCitacion"><i class="pi pi-clock"></i> Citación en cancha: {{ partido.horaCitacion }}</span>
+          <span *ngIf="partido.hora"><i class="pi pi-flag"></i> Hora del partido: {{ partido.hora }}</span>
         </div>
       </div>
     </div>
@@ -203,7 +206,12 @@
         thumbnailsPosition="bottom"
         styleClass="galeria-component">
         <ng-template let-item pTemplate="item">
-          <img class="galeria-img-main" [src]="siteConfig.imagenesGaleria[galeriaActiveIndex]?.url" [alt]="siteConfig.imagenesGaleria[galeriaActiveIndex]?.descripcion || 'Imagen galería'" />
+          <div class="galeria-img-wrap">
+            <img class="galeria-img-main" [src]="siteConfig.imagenesGaleria[galeriaActiveIndex]?.url" [alt]="siteConfig.imagenesGaleria[galeriaActiveIndex]?.descripcion || 'Imagen galería'" />
+            <div class="galeria-descripcion" *ngIf="siteConfig.imagenesGaleria[galeriaActiveIndex]?.descripcion">
+              {{ siteConfig.imagenesGaleria[galeriaActiveIndex]?.descripcion }}
+            </div>
+          </div>
         </ng-template>
         <ng-template let-item pTemplate="thumbnail">
           <img class="galeria-thumb" [src]="item.url" [alt]="item.descripcion || 'Miniatura'" />

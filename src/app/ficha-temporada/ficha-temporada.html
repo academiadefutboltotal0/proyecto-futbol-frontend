@@ -71,7 +71,8 @@
             <label>Cédula / RUT <span class="req">*</span></label>
             <input pInputText formControlName="cedula" placeholder="12345678-9"
               [ngClass]="{'input-error': campoInvalido('cedula')}" />
-            <small *ngIf="campoInvalido('cedula')" class="error">La cédula es obligatoria</small>
+            <small *ngIf="formulario.get('cedula')?.hasError('required') && formulario.get('cedula')?.touched" class="error">La cédula es obligatoria</small>
+            <small *ngIf="formulario.get('cedula')?.hasError('rutInvalido')" class="error">El RUT no es válido, revísalo</small>
           </div>
 
           <div class="campo">
@@ -210,7 +211,9 @@
 
           <div class="campo">
             <label>WhatsApp</label>
-            <input pInputText formControlName="whatsapp" placeholder="+56 9 1234 5678" />
+            <input pInputText formControlName="whatsapp" placeholder="+56 9 1234 5678"
+              [ngClass]="{'input-error': campoApoderadoInvalido('whatsapp')}" />
+            <small *ngIf="campoApoderadoInvalido('whatsapp')" class="error">El número no es válido, revísalo (ej: +56 9 1234 5678)</small>
           </div>
 
           <div class="campo">

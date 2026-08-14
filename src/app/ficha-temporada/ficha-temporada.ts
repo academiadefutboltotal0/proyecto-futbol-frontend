@@ -6,6 +6,9 @@ import {
   FormsModule,
   FormBuilder,
   FormGroup,
+  ValidatorFn,
+  AbstractControl,
+  ValidationErrors,
   Validators
 } from '@angular/forms';
 import { timeout } from 'rxjs/operators';
@@ -18,6 +21,47 @@ import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { ButtonModule } from 'primeng/button';
 import { ToastModule } from 'primeng/toast';
+
+function calcularDigitoVerificadorRut(cuerpo: string): string {
+  let suma = 0;
+  let multiplicador = 2;
+  for (let i = cuerpo.length - 1; i >= 0; i--) {
+    suma += Number(cuerpo[i]) * multiplicador;
+    multiplicador = multiplicador === 7 ? 2 : multiplicador + 1;
+  }
+  const resto = 11 - (suma % 11);
+  if (resto === 11) return '0';
+  if (resto === 10) return 'K';
+  return String(resto);
+}
+
+function rutValidator(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const valor = (control.value || '').toString();
+    if (!valor) return null;
+    const limpio = valor.replace(/[^0-9kK]/g, '').toUpperCase();
+    const cuerpo = limpio.slice(0, -1);
+    const dv = limpio.slice(-1);
+    if (!/^\d{7,8}$/.test(cuerpo) || calcularDigitoVerificadorRut(cuerpo) !== dv) {
+      return { rutInvalido: true };
+    }
+    return null;
+  };
+}
+
+function whatsappValidator(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const valor = (control.value || '').toString();
+    if (!valor) return null;
+    let digitos = valor.replace(/[^0-9]/g, '');
+    if (digitos.startsWith('56') && digitos.length === 11) digitos = digitos.slice(2);
+    if (digitos.length === 10 && digitos.startsWith('0')) digitos = digitos.slice(1);
+    if (digitos.length !== 9 || digitos[0] !== '9') {
+      return { whatsappInvalido: true };
+    }
+    return null;
+  };
+}
 
 @Component({
   selector: 'app-ficha-temporada',
@@ -100,7 +144,7 @@ export class FichaTemporadaComponent implements OnInit {
     this.formulario = this.fb.group({
       nombre:          ['', Validators.required],
       apellido:        ['', Validators.required],
-      cedula:          ['', Validators.required],
+      cedula:          ['', [Validators.required, rutValidator()]],
       fechaNacimiento: ['', Validators.required],
       posicion:        [null],
       pieHabil:        [null],
@@ -131,7 +175,7 @@ export class FichaTemporadaComponent implements OnInit {
       apoderado: this.fb.group({
         nombre:  ['', Validators.required],
         correo:  ['', [Validators.required, Validators.email]],
-        whatsapp:[''],
+        whatsapp:['', whatsappValidator()],
         vinculo: ['']
       })
     });

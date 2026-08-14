@@ -1,0 +1,61 @@
+<div class="estado-wrap" *ngIf="estado !== 'valido'">
+  <div class="estado-card"
+       [class.estado-error]="estado === 'invalido' || estado === 'expirado'"
+       [class.estado-ok]="estado === 'activada'">
+
+    <ng-container *ngIf="estado === 'cargando'">
+      <i class="pi pi-spin pi-spinner estado-icon"></i>
+      <p>Validando link de activación...</p>
+    </ng-container>
+
+    <ng-container *ngIf="estado === 'activada'">
+      <i class="pi pi-check-circle estado-icon"></i>
+      <h2>¡Cuenta activada!</h2>
+      <p>Tu correo fue confirmado y tu contraseña quedó guardada. Ya puedes iniciar sesión.</p>
+      <div style="margin-top:18px">
+        <button pButton label="Ir a iniciar sesión" icon="pi pi-sign-in" (click)="irALogin()"></button>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="estado === 'expirado'">
+      <i class="pi pi-clock estado-icon"></i>
+      <h2>Link expirado</h2>
+      <p>Este link de activación venció (dura 72 horas). Pide al administrador que te cree la cuenta nuevamente.</p>
+    </ng-container>
+
+    <ng-container *ngIf="estado === 'invalido'">
+      <i class="pi pi-times-circle estado-icon"></i>
+      <h2>Link inválido</h2>
+      <p>{{ mensajeError }}</p>
+    </ng-container>
+
+  </div>
+</div>
+
+<div class="form-wrapper" *ngIf="estado === 'valido'">
+  <div class="card">
+    <h1>Activa tu cuenta</h1>
+    <p class="subtitulo">Hola{{ nombre ? ', ' + nombre : '' }} — confirma tu correo creando tu propia contraseña.</p>
+
+    <div class="campo">
+      <label>Correo</label>
+      <input pInputText [value]="email" disabled style="width:100%;" />
+    </div>
+
+    <div class="campo">
+      <label>Nueva contraseña <span class="req">*</span></label>
+      <input pInputText type="password" [(ngModel)]="password" placeholder="Mínimo 8 caracteres" style="width:100%;" />
+    </div>
+
+    <div class="campo">
+      <label>Confirmar contraseña <span class="req">*</span></label>
+      <input pInputText type="password" [(ngModel)]="passwordConfirmar" style="width:100%;" (keydown.enter)="activar()" />
+    </div>
+
+    <small *ngIf="errorForm" class="error">{{ errorForm }}</small>
+
+    <div style="margin-top:20px;">
+      <button pButton label="Activar mi cuenta" icon="pi pi-check" [loading]="enviando" (click)="activar()"></button>
+    </div>
+  </div>
+</div>

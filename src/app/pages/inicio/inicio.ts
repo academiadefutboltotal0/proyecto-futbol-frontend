@@ -31,6 +31,7 @@ export class Inicio implements OnInit, AfterViewInit, OnDestroy {
 
   siteConfig = {
     tituloHeader: '',
+    kickerHero: 'Escuela Familias del Fútbol',
     tituloBienvenida: '',
     subtituloBienvenida: '',
     imagenesCarrusel: [] as string[],
@@ -66,6 +67,7 @@ export class Inicio implements OnInit, AfterViewInit, OnDestroy {
       next: (config) => {
         this.zone.run(() => {
           if (config.tituloHeader) this.siteConfig.tituloHeader = config.tituloHeader;
+          if (config.kickerHero) this.siteConfig.kickerHero = config.kickerHero;
           if (config.tituloBienvenida) this.siteConfig.tituloBienvenida = config.tituloBienvenida;
           if (config.subtituloBienvenida)
             this.siteConfig.subtituloBienvenida = config.subtituloBienvenida;
@@ -193,6 +195,7 @@ export interface Partido {
   visitante: string;
   fecha: string;
   hora?: string;
+  horaCitacion?: string;
   resultado?: string;
   sede?: string;
   tipo: 'proximo' | 'resultado';

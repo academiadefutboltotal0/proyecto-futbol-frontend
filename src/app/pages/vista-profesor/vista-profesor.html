@@ -535,20 +535,84 @@
               </div>
 
               <!-- Lista historial filtrado -->
-              <div class="rend-hist-card" *ngFor="let r of rendHistorialFiltrado">
-                <span class="rend-hist-fecha">{{ r.fecha | date:'dd/MM/yyyy' }}</span>
-                <div class="rend-hist-scores">
-                  <span><strong>Fís:</strong> {{ r.fisico?.promedio || 0 }}%</span>
-                  <span><strong>Téc:</strong> {{ r.tecnico?.promedio || 0 }}%</span>
-                  <span><strong>Act:</strong> {{ r.actitudinal?.promedio || 0 }}%</span>
-                  <span><strong>Est:</strong> {{ r.estrategico?.promedio || 0 }}%</span>
-                  <span class="rend-hist-avg"><strong>Gral:</strong> {{ r.promedioGeneral || 0 }}%</span>
+              <ng-container *ngFor="let r of rendHistorialFiltrado">
+                <div class="rend-hist-card">
+                  <span class="rend-hist-fecha">{{ r.fecha | date:'dd/MM/yyyy' }}</span>
+                  <div class="rend-hist-scores">
+                    <span><strong>Fís:</strong> {{ r.fisico?.promedio || 0 }}%</span>
+                    <span><strong>Téc:</strong> {{ r.tecnico?.promedio || 0 }}%</span>
+                    <span><strong>Act:</strong> {{ r.actitudinal?.promedio || 0 }}%</span>
+                    <span><strong>Est:</strong> {{ r.estrategico?.promedio || 0 }}%</span>
+                    <span class="rend-hist-avg"><strong>Gral:</strong> {{ r.promedioGeneral || 0 }}%</span>
+                    <button type="button" (click)="editarRendimientoHistorial(r)" title="Editar" style="background:none;border:none;color:inherit;opacity:.6;cursor:pointer;">
+                      <i class="pi pi-pencil"></i>
+                    </button>
+                  </div>
+                  <p class="rend-hist-adversidad" *ngIf="r.actitudAdversidad" style="font-size:.78rem;opacity:.7;margin:.25rem 0 0;">
+                    <strong>Ante adversidad:</strong> {{ r.actitudAdversidad }}
+                  </p>
+                  <p class="rend-hist-comentario" *ngIf="r.comentario">{{ r.comentario }}</p>
                 </div>
-                <p class="rend-hist-adversidad" *ngIf="r.actitudAdversidad" style="font-size:.78rem;opacity:.7;margin:.25rem 0 0;">
-                  <strong>Ante adversidad:</strong> {{ r.actitudAdversidad }}
-                </p>
-                <p class="rend-hist-comentario" *ngIf="r.comentario">{{ r.comentario }}</p>
-              </div>
+
+                <!-- Formulario de edición inline -->
+                <div *ngIf="rendHistEditandoId === r._id && rendHistEditForm" style="display:flex; flex-direction:column; gap:.6rem; padding:.85rem; margin:-.4rem 0 .4rem; background:var(--surface-alt); border:1px solid var(--bdr); border-radius:8px;">
+                  <div class="rend-categorias">
+                    <div class="rend-cat-bloque">
+                      <div class="rend-cat-header">
+                        <span class="rend-cat-titulo"><i class="pi pi-bolt"></i> Físico</span>
+                        <span class="rend-cat-prom">{{ promedioCat(rendHistEditForm.fisico) }}%</span>
+                      </div>
+                      <div class="rend-subitem"><label>Velocidad</label><input type="range" min="0" max="100" step="10" [(ngModel)]="rendHistEditForm.fisico.velocidad"/><span>{{ rendHistEditForm.fisico.velocidad }}%</span></div>
+                      <div class="rend-subitem"><label>Agilidad</label><input type="range" min="0" max="100" step="10" [(ngModel)]="rendHistEditForm.fisico.agilidad"/><span>{{ rendHistEditForm.fisico.agilidad }}%</span></div>
+                      <div class="rend-subitem"><label>Resistencia</label><input type="range" min="0" max="100" step="10" [(ngModel)]="rendHistEditForm.fisico.resistencia"/><span>{{ rendHistEditForm.fisico.resistencia }}%</span></div>
+                      <div class="rend-subitem"><label>Fuerza</label><input type="range" min="0" max="100" step="10" [(ngModel)]="rendHistEditForm.fisico.fuerza"/><span>{{ rendHistEditForm.fisico.fuerza }}%</span></div>
+                      <div class="rend-subitem"><label>Coordinación</label><input type="range" min="0" max="100" step="10" [(ngModel)]="rendHistEditForm.fisico.coordinacion"/><span>{{ rendHistEditForm.fisico.coordinacion }}%</span></div>
+                    </div>
+                    <div class="rend-cat-bloque">
+                      <div class="rend-cat-header">
+                        <span class="rend-cat-titulo"><i class="pi pi-bullseye"></i> Técnico</span>
+                        <span class="rend-cat-prom">{{ promedioCat(rendHistEditForm.tecnico) }}%</span>
+                      </div>
+                      <div class="rend-subitem"><label>Control y dominio</label><input type="range" min="0" max="100" step="10" [(ngModel)]="rendHistEditForm.tecnico.controlDominio"/><span>{{ rendHistEditForm.tecnico.controlDominio }}%</span></div>
+                      <div class="rend-subitem"><label>Precisión</label><input type="range" min="0" max="100" step="10" [(ngModel)]="rendHistEditForm.tecnico.precisionEjecucion"/><span>{{ rendHistEditForm.tecnico.precisionEjecucion }}%</span></div>
+                      <div class="rend-subitem"><label>Fluidez</label><input type="range" min="0" max="100" step="10" [(ngModel)]="rendHistEditForm.tecnico.fluidezMovimiento"/><span>{{ rendHistEditForm.tecnico.fluidezMovimiento }}%</span></div>
+                      <div class="rend-subitem"><label>Uso de perfiles</label><input type="range" min="0" max="100" step="10" [(ngModel)]="rendHistEditForm.tecnico.usoPerfiles"/><span>{{ rendHistEditForm.tecnico.usoPerfiles }}%</span></div>
+                      <div class="rend-subitem"><label>Postura corporal</label><input type="range" min="0" max="100" step="10" [(ngModel)]="rendHistEditForm.tecnico.posturaCorporal"/><span>{{ rendHistEditForm.tecnico.posturaCorporal }}%</span></div>
+                    </div>
+                    <div class="rend-cat-bloque">
+                      <div class="rend-cat-header">
+                        <span class="rend-cat-titulo"><i class="pi pi-heart"></i> Actitudinal</span>
+                        <span class="rend-cat-prom">{{ promedioCat(rendHistEditForm.actitudinal) }}%</span>
+                      </div>
+                      <div class="rend-subitem"><label>Motivación</label><input type="range" min="0" max="100" step="10" [(ngModel)]="rendHistEditForm.actitudinal.motivacion"/><span>{{ rendHistEditForm.actitudinal.motivacion }}%</span></div>
+                      <div class="rend-subitem"><label>Reacción al resultado</label><input type="range" min="0" max="100" step="10" [(ngModel)]="rendHistEditForm.actitudinal.reaccionResultado"/><span>{{ rendHistEditForm.actitudinal.reaccionResultado }}%</span></div>
+                      <div class="rend-subitem"><label>Apoyo al compañero</label><input type="range" min="0" max="100" step="10" [(ngModel)]="rendHistEditForm.actitudinal.apoyoCompanero"/><span>{{ rendHistEditForm.actitudinal.apoyoCompanero }}%</span></div>
+                      <div class="rend-subitem"><label>Deseos de superación</label><input type="range" min="0" max="100" step="10" [(ngModel)]="rendHistEditForm.actitudinal.deseosSuperacion"/><span>{{ rendHistEditForm.actitudinal.deseosSuperacion }}%</span></div>
+                      <div class="rend-subitem"><label>Resiliencia</label><input type="range" min="0" max="100" step="10" [(ngModel)]="rendHistEditForm.actitudinal.resiliencia"/><span>{{ rendHistEditForm.actitudinal.resiliencia }}%</span></div>
+                    </div>
+                    <div class="rend-cat-bloque">
+                      <div class="rend-cat-header">
+                        <span class="rend-cat-titulo"><i class="pi pi-compass"></i> Estratégico</span>
+                        <span class="rend-cat-prom">{{ promedioCat(rendHistEditForm.estrategico) }}%</span>
+                      </div>
+                      <div class="rend-subitem"><label>Toma de decisiones</label><input type="range" min="0" max="100" step="10" [(ngModel)]="rendHistEditForm.estrategico.tomaDecisiones"/><span>{{ rendHistEditForm.estrategico.tomaDecisiones }}%</span></div>
+                      <div class="rend-subitem"><label>Lectura de juego</label><input type="range" min="0" max="100" step="10" [(ngModel)]="rendHistEditForm.estrategico.lecturaJuego"/><span>{{ rendHistEditForm.estrategico.lecturaJuego }}%</span></div>
+                      <div class="rend-subitem"><label>Ocupación del espacio</label><input type="range" min="0" max="100" step="10" [(ngModel)]="rendHistEditForm.estrategico.ocupacionEspacio"/><span>{{ rendHistEditForm.estrategico.ocupacionEspacio }}%</span></div>
+                      <div class="rend-subitem"><label>Transiciones</label><input type="range" min="0" max="100" step="10" [(ngModel)]="rendHistEditForm.estrategico.transiciones"/><span>{{ rendHistEditForm.estrategico.transiciones }}%</span></div>
+                      <div class="rend-subitem"><label>Cumplimiento del plan</label><input type="range" min="0" max="100" step="10" [(ngModel)]="rendHistEditForm.estrategico.cumplimientoPlan"/><span>{{ rendHistEditForm.estrategico.cumplimientoPlan }}%</span></div>
+                    </div>
+                  </div>
+                  <textarea [(ngModel)]="rendHistEditForm.comentario" rows="2" placeholder="Comentario" class="rend-textarea"></textarea>
+                  <div class="guardar-row">
+                    <button class="btn-guardar" style="background:var(--surface); color:var(--text); border:1px solid var(--bdr);" (click)="cancelarEdicionRendimientoHistorial()">Cancelar</button>
+                    <button class="btn-guardar" (click)="guardarEdicionRendimientoHistorial()" [disabled]="guardandoRendHistEdit">
+                      <i class="pi pi-save" *ngIf="!guardandoRendHistEdit"></i>
+                      <i class="pi pi-spin pi-spinner" *ngIf="guardandoRendHistEdit"></i>
+                      Guardar cambios
+                    </button>
+                  </div>
+                </div>
+              </ng-container>
             </div>
 
           </ng-container>

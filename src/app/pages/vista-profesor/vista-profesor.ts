@@ -36,7 +36,7 @@ export class VistaProfesorComponent implements OnInit {
   error = '';
   tituloHeader = 'Escuela de Fútbol';
 
-  tabActiva: 'jugadores' | 'asistencia' | 'rendimiento' = 'jugadores';
+  tabActiva: 'jugadores' | 'asistencia' | 'rendimiento' = 'asistencia';
   divisionFiltro: string | null = null;
 
   // Asistencia
@@ -99,12 +99,33 @@ export class VistaProfesorComponent implements OnInit {
       next: (p: any) => {
         this.profesor = p;
         this.api.getMisFichas().subscribe({
-          next: (f: any) => { this.fichas = f; this.cargando = false; },
+          next: (f: any) => {
+            this.fichas = f;
+            this.cargando = false;
+            this.seleccionarHoySiEsDiaDeEntrenamiento();
+          },
           error: () => { this.error = 'Error al cargar jugadores.'; this.cargando = false; }
         });
       },
       error: () => { this.error = 'Error al cargar perfil del profesor.'; this.cargando = false; }
     });
+  }
+
+  /* Si hoy es uno de los días de entrenamiento de la semana, lo deja preseleccionado
+     para que el profesor pueda pasar lista de inmediato al entrar, sin clics extra. */
+  private seleccionarHoySiEsDiaDeEntrenamiento() {
+    const hoy = new Date();
+    const toISO = (d: Date) => {
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const dia = String(d.getDate()).padStart(2, '0');
+      return `${y}-${m}-${dia}`;
+    };
+    const hoyISO = toISO(hoy);
+    const esDiaDeEntrenamiento = this.diasEntrenamiento.some(d => d.fechaISO === hoyISO);
+    if (esDiaDeEntrenamiento) {
+      this.seleccionarDia(hoyISO);
+    }
   }
 
   get diasEntrenamiento(): { dia: number; diaNombre: string; fechaISO: string; fecha: Date }[] {
@@ -376,6 +397,44 @@ export class VistaProfesorComponent implements OnInit {
     });
     this.rendimientoService.obtenerResumen(this.jugadorSeleccionadoRend._id).subscribe({
       next: (data: any) => { this.rendResumen = data; }
+    });
+    this.rendHistEditandoId = null;
+    this.rendHistEditForm = null;
+  }
+
+  /* Edición de una sesión ya guardada, desde el historial del profesor */
+  rendHistEditandoId: string | null = null;
+  rendHistEditForm: any = null;
+  guardandoRendHistEdit = false;
+
+  editarRendimientoHistorial(r: any) {
+    this.rendHistEditandoId = r._id;
+    this.rendHistEditForm = {
+      fisico: { ...r.fisico },
+      tecnico: { ...r.tecnico },
+      actitudinal: { ...r.actitudinal },
+      estrategico: { ...r.estrategico },
+      comentario: r.comentario || '',
+    };
+  }
+
+  cancelarEdicionRendimientoHistorial() {
+    this.rendHistEditandoId = null;
+    this.rendHistEditForm = null;
+  }
+
+  guardarEdicionRendimientoHistorial() {
+    if (!this.rendHistEditandoId || !this.rendHistEditForm) return;
+    this.guardandoRendHistEdit = true;
+    this.rendimientoService.editarRendimiento(this.rendHistEditandoId, this.rendHistEditForm).subscribe({
+      next: (actualizado: any) => {
+        const idx = this.rendHistorial.findIndex((r: any) => r._id === this.rendHistEditandoId);
+        if (idx >= 0) this.rendHistorial[idx] = actualizado;
+        this.guardandoRendHistEdit = false;
+        this.cancelarEdicionRendimientoHistorial();
+        this.buildRendChart();
+      },
+      error: () => { this.guardandoRendHistEdit = false; }
     });
   }
 

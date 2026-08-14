@@ -276,6 +276,7 @@
             <th>Nombre</th>
             <th>Categoría</th>
             <th>Profesor Principal</th>
+            <th>Sede</th>
             <th>N° Jugadores</th>
             <th>Acciones</th>
           </tr>
@@ -285,6 +286,7 @@
             <td>{{ division.nombre }}</td>
             <td>{{ division.categoria || '—' }}</td>
             <td>{{ division.profesorPrincipal || '—' }}</td>
+            <td>{{ division.sede || '—' }}</td>
             <td>{{ contarJugadoresDivision(division) }}</td>
             <td>
               <div style="display:flex; gap:0.5rem;">
@@ -295,7 +297,7 @@
           </tr>
         </ng-template>
         <ng-template pTemplate="emptymessage">
-          <tr><td colspan="5" style="text-align:center; padding:2rem;">No hay divisiones registradas. Agrega la primera.</td></tr>
+          <tr><td colspan="6" style="text-align:center; padding:2rem;">No hay divisiones registradas. Agrega la primera.</td></tr>
         </ng-template>
       </p-table>
     </p-card>
@@ -367,8 +369,14 @@
       <div class="sec-header">
         <h3>Validación de Pagos</h3>
       </div>
-      <p style="color:rgba(233,247,234,0.55); font-size:0.88rem; margin-top:0;">Solo se muestran pagos pendientes.</p>
+      <p style="color:rgba(233,247,234,0.55); font-size:0.88rem; margin-top:0;">
+        Pendientes de revisión y rechazados (los rechazados quedan aquí por si hay que corregirlos, no desaparecen).
+      </p>
       <p *ngIf="cargandoPagos">Cargando pagos...</p>
+
+      <div *ngIf="!cargandoPagos && pagosPendientes.length > 0" style="font-weight:600; margin-bottom:0.75rem;">
+        Total pendiente: {{ totalPagosPendientes | currency:'CLP':'symbol':'1.0-0' }}
+      </div>
 
       <p-card *ngFor="let pago of pagosPendientes" class="pago-item">
         <div class="item-main" (click)="verVoucher(pago)">
@@ -377,12 +385,16 @@
           <p><strong>Sede:</strong> {{ pago.sede }}</p>
           <p><strong>Monto:</strong> {{ pago.monto | currency:'CLP':'symbol':'1.0-0' }}</p>
           <p><strong>Fecha:</strong> {{ pago.fecha | date:'dd/MM/yyyy' }}</p>
-          <p class="estado">Estado: {{ pago.estado }}</p>
+          <p class="estado">
+            Estado:
+            <p-tag *ngIf="pago.estado === 'rechazado'" value="Rechazado" severity="danger"></p-tag>
+            <p-tag *ngIf="pago.estado !== 'rechazado'" value="Pendiente" severity="warn"></p-tag>
+          </p>
         </div>
 
         <div class="actions">
           <button pButton type="button" severity="success" label="Aprobar" (click)="cambiarEstado(pago, 'aprobado')"></button>
-          <button pButton type="button" severity="danger" label="Rechazar" (click)="cambiarEstado(pago, 'rechazado')"></button>
+          <button pButton type="button" severity="danger" label="Rechazar" *ngIf="pago.estado !== 'rechazado'" (click)="cambiarEstado(pago, 'rechazado')"></button>
         </div>
 
         <div class="voucher-thumb">
@@ -392,7 +404,7 @@
       </p-card>
 
       <p *ngIf="!cargandoPagos && pagosPendientes.length === 0">
-        No hay pagos pendientes para revisar.
+        No hay pagos pendientes ni rechazados para revisar.
       </p>
     </p-card>
   </div>
@@ -411,6 +423,10 @@
       </p>
 
       <p *ngIf="cargandoAprobados">Cargando pagos aprobados...</p>
+
+      <div *ngIf="!cargandoAprobados && pagosAprobados.length > 0" style="font-weight:600; margin-bottom:0.75rem;">
+        Total aprobado: {{ totalPagosAprobados | currency:'CLP':'symbol':'1.0-0' }}
+      </div>
 
       <p-table
         *ngIf="!cargandoAprobados"
@@ -639,6 +655,11 @@
         </div>
 
         <div class="config-field">
+          <label>Texto pequeño sobre la foto de portada</label>
+          <input pInputText [(ngModel)]="siteConfig.kickerHero" style="width:100%;" placeholder="Ej: Escuela Familias del Fútbol" />
+        </div>
+
+        <div class="config-field">
           <label>Título de bienvenida</label>
           <input pInputText [(ngModel)]="siteConfig.tituloBienvenida" style="width:100%;" placeholder="Ej: ¡Bienvenidos Crack!" />
         </div>
@@ -715,8 +736,8 @@
             (click)="eliminarImagenGaleria(i)" pTooltip="Eliminar">
           </button>
           <div style="padding:0.5rem; background:rgba(0,0,0,0.5);">
-            <input pInputText [(ngModel)]="item.descripcion" placeholder="Descripción (opcional)"
-              style="width:100%; font-size:0.78rem;" />
+            <textarea pTextarea [(ngModel)]="item.descripcion" placeholder="Descripción (opcional, se muestra sobre la foto)"
+              rows="2" style="width:100%; font-size:0.78rem; resize:vertical;"></textarea>
           </div>
         </div>
       </div>
@@ -909,6 +930,7 @@
           <td>
             <div style="display:flex; gap:0.4rem; flex-wrap:wrap;">
               <p-button icon="pi pi-eye" size="small" severity="secondary" (onClick)="verDetalleFicha(f)" pTooltip="Ver ficha"></p-button>
+              <p-button icon="pi pi-chart-bar" size="small" severity="info" (onClick)="verRendimiento(f)" pTooltip="Ver / editar rendimiento"></p-button>
               <p-button *ngIf="!f.beca && f.pagoMesActual !== 'pagado'" icon="pi pi-check-circle" size="small" severity="success" (onClick)="marcarPago(f,'pagado')" pTooltip="Marcar pagado"></p-button>
               <p-button *ngIf="!f.beca && f.pagoMesActual === 'pagado'" icon="pi pi-times-circle" size="small" severity="danger" (onClick)="marcarPago(f,'pendiente')" pTooltip="Marcar pendiente"></p-button>
               <p-button icon="pi pi-user-plus" size="small" severity="info" (onClick)="crearCuentaCliente(f._id)" pTooltip="Crear cuenta cliente" [disabled]="f.tieneCuenta"></p-button>
@@ -1007,7 +1029,7 @@
           <td>
             <div style="display:flex; gap:0.4rem;">
               <p-button icon="pi pi-eye" size="small" severity="secondary" (onClick)="abrirEditarFicha(f)" pTooltip="Ver / Editar"></p-button>
-              <p-button icon="pi pi-chart-bar" size="small" severity="info" (onClick)="verRendimiento(f)" pTooltip="Ver rendimiento"></p-button>
+              <p-button icon="pi pi-chart-bar" size="small" severity="info" (onClick)="verRendimiento(f)" pTooltip="Ver / editar rendimiento"></p-button>
             </div>
           </td>
         </tr>
@@ -1244,7 +1266,22 @@
         <label style="font-weight:600;">N° Estudiantes</label>
         <input pInputText type="number" [(ngModel)]="divisionForm.estudiantes" style="width:100%;" min="0" />
       </div>
+      <div style="display:flex; flex-direction:column; gap:0.25rem;">
+        <label style="font-weight:600;">Sede</label>
+        <p-select [options]="sedeJugadorOpciones" [(ngModel)]="divisionForm.sede" optionLabel="label" optionValue="value" placeholder="Seleccionar sede" appendTo="body" style="width:100%;"></p-select>
+      </div>
     </div>
+
+    <div>
+      <label style="font-weight:600; display:block; margin-bottom:0.5rem;">Días y hora de entrenamiento</label>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(110px, 1fr)); gap:0.75rem;">
+        <div style="display:flex;flex-direction:column;gap:0.2rem;" *ngFor="let d of diasSemanaHorario">
+          <label style="font-weight:400; font-size:0.85rem;">{{ d.label }}</label>
+          <input pInputText type="time" [(ngModel)]="divisionForm.horarioEntrenamiento[d.dia]" style="width:100%;" />
+        </div>
+      </div>
+    </div>
+
     <div style="display:flex; justify-content:flex-end; gap:0.5rem; margin-top:0.5rem;">
       <p-button label="Cancelar" severity="secondary" (onClick)="modalDivisionVisible=false"></p-button>
       <p-button label="Guardar" icon="pi pi-save" (onClick)="guardarDivision()"></p-button>
@@ -1269,8 +1306,12 @@
         <input type="date" [(ngModel)]="partidoForm.fecha" style="width:100%; padding:0.5rem; border:1px solid rgba(57,211,83,0.22); border-radius:6px;" />
       </div>
       <div style="display:flex; flex-direction:column; gap:0.25rem;">
-        <label style="font-weight:600;">Hora</label>
+        <label style="font-weight:600;">Hora del partido</label>
         <input pInputText [(ngModel)]="partidoForm.hora" style="width:100%;" placeholder="Ej: 18:00" />
+      </div>
+      <div style="display:flex; flex-direction:column; gap:0.25rem;">
+        <label style="font-weight:600;">Hora de citación en cancha</label>
+        <input pInputText [(ngModel)]="partidoForm.horaCitacion" style="width:100%;" placeholder="Ej: 17:30" />
       </div>
       <div style="display:flex; flex-direction:column; gap:0.25rem;">
         <label style="font-weight:600;">Resultado <small style="font-weight:400;">(si ya se jugó)</small></label>
@@ -1508,7 +1549,7 @@
           <input pInputText [(ngModel)]="fichaEditandoForm.otrosDeportes" style="width:100%;" />
         </div>
         <div style="display:flex;flex-direction:column;gap:0.2rem;">
-          <label style="font-weight:600;">Otras escuelas</label>
+          <label style="font-weight:600;">Otras escuelas en que ha estado</label>
           <input pInputText [(ngModel)]="fichaEditandoForm.otrasEscuelas" style="width:100%;" />
         </div>
       </div>
@@ -1542,34 +1583,14 @@
 
     <div>
       <h4 style="margin:0 0 0.75rem; color:#39d353;">Horario de salida del colegio</h4>
-      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(110px, 1fr)); gap:0.75rem;">
-        <div style="display:flex;flex-direction:column;gap:0.2rem;">
-          <label style="font-weight:600;">Lunes</label>
-          <input pInputText type="time" [(ngModel)]="fichaEditandoForm.horarioSalidaColegio.lunes" style="width:100%;" />
-        </div>
-        <div style="display:flex;flex-direction:column;gap:0.2rem;">
-          <label style="font-weight:600;">Martes</label>
-          <input pInputText type="time" [(ngModel)]="fichaEditandoForm.horarioSalidaColegio.martes" style="width:100%;" />
-        </div>
-        <div style="display:flex;flex-direction:column;gap:0.2rem;">
-          <label style="font-weight:600;">Miércoles</label>
-          <input pInputText type="time" [(ngModel)]="fichaEditandoForm.horarioSalidaColegio.miercoles" style="width:100%;" />
-        </div>
-        <div style="display:flex;flex-direction:column;gap:0.2rem;">
-          <label style="font-weight:600;">Jueves</label>
-          <input pInputText type="time" [(ngModel)]="fichaEditandoForm.horarioSalidaColegio.jueves" style="width:100%;" />
-        </div>
-        <div style="display:flex;flex-direction:column;gap:0.2rem;">
-          <label style="font-weight:600;">Viernes</label>
-          <input pInputText type="time" [(ngModel)]="fichaEditandoForm.horarioSalidaColegio.viernes" style="width:100%;" />
-        </div>
-        <div style="display:flex;flex-direction:column;gap:0.2rem;">
-          <label style="font-weight:600;">Sábado</label>
-          <input pInputText type="time" [(ngModel)]="fichaEditandoForm.horarioSalidaColegio.sabado" style="width:100%;" />
-        </div>
-        <div style="display:flex;flex-direction:column;gap:0.2rem;">
-          <label style="font-weight:600;">Domingo</label>
-          <input pInputText type="time" [(ngModel)]="fichaEditandoForm.horarioSalidaColegio.domingo" style="width:100%;" />
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:0.75rem;">
+        <div style="display:flex;flex-direction:column;gap:0.2rem;" *ngFor="let d of diasSemanaHorario">
+          <label style="font-weight:600;">{{ d.label }}</label>
+          <input pInputText type="time" [(ngModel)]="fichaEditandoForm.horarioSalidaColegio[d.dia]" style="width:100%;" />
+          <label style="display:flex; align-items:center; gap:0.35rem; font-weight:400; font-size:0.78rem; opacity:0.8; margin-top:0.15rem;">
+            <input type="checkbox" [checked]="!fichaEditandoForm.horarioSalidaColegio[d.dia]" (change)="toggleSinColegioAdmin(d.dia)" />
+            Sin colegio
+          </label>
         </div>
       </div>
     </div>
@@ -1639,12 +1660,17 @@
   [draggable]="false"
   [resizable]="false">
   <div *ngIf="credencialesCliente" style="display:flex; flex-direction:column; gap:1rem;">
-    <p>La cuenta fue creada exitosamente. Comparte estas credenciales con el apoderado:</p>
-    <div style="background:rgba(57,211,83,0.08); border:1px solid rgba(57,211,83,0.25); border-radius:10px; padding:1rem;">
-      <p style="margin:0 0 0.5rem;"><strong>Correo:</strong> {{ credencialesCliente.email }}</p>
-      <p style="margin:0;"><strong>Contraseña temporal:</strong> {{ credencialesCliente.passwordTemporal }}</p>
+    <p *ngIf="credencialesCliente.correoEnviado">
+      La cuenta fue creada y se envió un correo de activación a <strong>{{ credencialesCliente.email }}</strong>.
+      El apoderado debe abrir ese correo, confirmar su cuenta y crear su propia contraseña.
+    </p>
+    <p *ngIf="!credencialesCliente.correoEnviado" style="color:#f59e0b;">
+      La cuenta fue creada, pero el correo automático no se pudo enviar (revisa la configuración de SMTP en el
+      servidor). Comparte este link manualmente con el apoderado <strong>({{ credencialesCliente.email }})</strong>:
+    </p>
+    <div *ngIf="!credencialesCliente.correoEnviado" style="background:rgba(57,211,83,0.08); border:1px solid rgba(57,211,83,0.25); border-radius:10px; padding:1rem; word-break:break-all; font-size:0.85rem;">
+      {{ credencialesCliente.linkActivacion }}
     </div>
-    <p style="font-size:0.85rem; opacity:0.7;">El apoderado deberá cambiar la contraseña al iniciar sesión por primera vez.</p>
     <div style="display:flex; justify-content:flex-end;">
       <p-button label="Cerrar" severity="secondary" (onClick)="modalCredencialesVisible=false"></p-button>
     </div>
@@ -1807,13 +1833,15 @@
   [(visible)]="modalPromedioSalidaVisible"
   [modal]="true"
   appendTo="body"
-  [style]="{ width: 'min(95vw, 480px)' }"
+  [style]="{ width: 'min(95vw, 560px)' }"
   [draggable]="false"
   [resizable]="false">
-  <div style="display:flex; flex-direction:column; gap:1.25rem;">
-    <p style="font-size:0.85rem; opacity:0.7; margin:0;">Promedio calculado sobre los jugadores que tienen ese día registrado. Útil para saber a qué hora podría empezar el entrenamiento cada día.</p>
-    <div style="display:flex; flex-direction:column; gap:0.5rem;">
-      <div *ngFor="let d of promedioSalidaData" style="display:grid; grid-template-columns:1fr auto auto; gap:0.75rem; align-items:center; padding:0.6rem 0.85rem; background:rgba(57,211,83,0.05); border:1px solid rgba(57,211,83,0.15); border-radius:8px;">
+  <div style="display:flex; flex-direction:column; gap:1.5rem;">
+    <p style="font-size:0.85rem; opacity:0.7; margin:0;">Promedio calculado por sede, sobre los jugadores que tienen ese día registrado. Útil para saber a qué hora podría empezar el entrenamiento en cada sede.</p>
+    <div *ngIf="promedioSalidaData.length === 0" style="opacity:0.5; font-style:italic;">No hay sedes con jugadores registrados.</div>
+    <div *ngFor="let s of promedioSalidaData" style="display:flex; flex-direction:column; gap:0.5rem;">
+      <h4 style="margin:0; color:#39d353;"><i class="pi pi-map-marker"></i> {{ s.sede }}</h4>
+      <div *ngFor="let d of s.dias" style="display:grid; grid-template-columns:1fr auto auto; gap:0.75rem; align-items:center; padding:0.6rem 0.85rem; background:rgba(57,211,83,0.05); border:1px solid rgba(57,211,83,0.15); border-radius:8px;">
         <span style="font-weight:600;">{{ d.dia }}</span>
         <span style="color:#39d353; font-weight:700; font-size:1.05rem;">{{ d.promedio }}</span>
         <span style="font-size:0.78rem; opacity:0.6;">{{ d.cantidad }} jugador{{ d.cantidad === 1 ? '' : 'es' }}</span>

@@ -98,7 +98,7 @@ export class AdminComponent implements OnInit {
   tabJugadoresLoaded = false;
   fichaSeleccionada: any = null;
   modalFichaVisible = false;
-  credencialesCliente: { email: string; passwordTemporal: string } | null = null;
+  credencialesCliente: { email: string; correoEnviado: boolean; linkActivacion: string } | null = null;
   modalCredencialesVisible = false;
   modalEditarFichaVisible = false;
   fichaEditandoForm: any = {};
@@ -162,9 +162,16 @@ export class AdminComponent implements OnInit {
 
   /* ── DIVISIONES ───────────────────────────────── */
   divisiones: any[] = [];
-  divisionForm = { nombre: '', categoria: '', profesorPrincipal: '', estudiantes: 0 };
+  divisionForm: any = this.divisionFormVacio();
   divisionEditando: any = null;
   modalDivisionVisible = false;
+
+  divisionFormVacio() {
+    return {
+      nombre: '', categoria: '', profesorPrincipal: '', estudiantes: 0, sede: '',
+      horarioEntrenamiento: { lunes: '', martes: '', miercoles: '', jueves: '', viernes: '', sabado: '', domingo: '' },
+    };
+  }
 
   /* ── PAGOS ────────────────────────────────────── */
   pagosPendientes: Pago[] = [];
@@ -172,11 +179,19 @@ export class AdminComponent implements OnInit {
   pagoSeleccionado: Pago | null = null;
   modalVoucherVisible = false;
   cargandoPagos = false;
+
+  get totalPagosPendientes(): number {
+    return this.pagosPendientes.filter(p => p.estado !== 'rechazado').reduce((s, p) => s + (p.monto || 0), 0);
+  }
+
+  get totalPagosAprobados(): number {
+    return this.pagosAprobados.reduce((s, p) => s + (p.monto || 0), 0);
+  }
   cargandoAprobados = false;
 
   /* ── PARTIDOS ─────────────────────────────────── */
   partidos: any[] = [];
-  partidoForm = { local: 'Santiago Wanderers', visitante: '', fecha: '', hora: '', resultado: '', sede: '', tipo: 'proximo' };
+  partidoForm = { local: 'Santiago Wanderers', visitante: '', fecha: '', hora: '', horaCitacion: '', resultado: '', sede: '', tipo: 'proximo' };
   partidoEditando: any = null;
   modalPartidoVisible = false;
   tipoPartidoOpciones = [
@@ -189,6 +204,7 @@ export class AdminComponent implements OnInit {
   activeTab = 'solicitudes';
   siteConfig = {
     tituloHeader: '',
+    kickerHero: '',
     tituloBienvenida: '',
     subtituloBienvenida: '',
     imagenesCarrusel: [] as string[],
@@ -239,9 +255,27 @@ export class AdminComponent implements OnInit {
     });
   }
 
+  /* ── HORARIO DE SALIDA DEL COLEGIO (editar ficha) ─── */
+  diasSemanaHorario: { dia: string; label: string }[] = [
+    { dia: 'lunes', label: 'Lunes' },
+    { dia: 'martes', label: 'Martes' },
+    { dia: 'miercoles', label: 'Miércoles' },
+    { dia: 'jueves', label: 'Jueves' },
+    { dia: 'viernes', label: 'Viernes' },
+    { dia: 'sabado', label: 'Sábado' },
+    { dia: 'domingo', label: 'Domingo' },
+  ];
+
+  toggleSinColegioAdmin(dia: string) {
+    if (!this.fichaEditandoForm.horarioSalidaColegio) this.fichaEditandoForm.horarioSalidaColegio = {};
+    if (this.fichaEditandoForm.horarioSalidaColegio[dia]) {
+      this.fichaEditandoForm.horarioSalidaColegio[dia] = '';
+    }
+  }
+
   /* ── PROMEDIO HORARIO DE SALIDA DEL COLEGIO ──────── */
   modalPromedioSalidaVisible = false;
-  promedioSalidaData: { dia: string; promedio: string; cantidad: number }[] = [];
+  promedioSalidaData: { sede: string; dias: { dia: string; promedio: string; cantidad: number }[] }[] = [];
 
   private minutosDesdeHora(hora: string): number | null {
     if (!hora) return null;
@@ -266,13 +300,18 @@ export class AdminComponent implements OnInit {
       { key: 'sabado', label: 'Sábado' },
       { key: 'domingo', label: 'Domingo' },
     ];
-    this.promedioSalidaData = dias.map(({ key, label }) => {
-      const minutos = this.fichas
-        .map((f: any) => this.minutosDesdeHora(f.horarioSalidaColegio?.[key]))
-        .filter((m): m is number => m !== null);
-      if (!minutos.length) return { dia: label, promedio: '—', cantidad: 0 };
-      const promedio = minutos.reduce((a, b) => a + b, 0) / minutos.length;
-      return { dia: label, promedio: this.horaDesdeMinutos(promedio), cantidad: minutos.length };
+    const sedes = [...new Set(this.fichas.map((f: any) => (f.sede || '').trim()).filter(Boolean))].sort();
+    this.promedioSalidaData = sedes.map((sede: string) => {
+      const fichasSede = this.fichas.filter((f: any) => (f.sede || '').trim() === sede);
+      const diasData = dias.map(({ key, label }) => {
+        const minutos = fichasSede
+          .map((f: any) => this.minutosDesdeHora(f.horarioSalidaColegio?.[key]))
+          .filter((m): m is number => m !== null);
+        if (!minutos.length) return { dia: label, promedio: '—', cantidad: 0 };
+        const promedio = minutos.reduce((a, b) => a + b, 0) / minutos.length;
+        return { dia: label, promedio: this.horaDesdeMinutos(promedio), cantidad: minutos.length };
+      });
+      return { sede, dias: diasData };
     });
     this.modalPromedioSalidaVisible = true;
   }
@@ -471,8 +510,17 @@ export class AdminComponent implements OnInit {
   abrirModalDivision(d?: any) {
     this.divisionEditando = d || null;
     this.divisionForm = d
-      ? { nombre: d.nombre, categoria: d.categoria, profesorPrincipal: d.profesorPrincipal, estudiantes: d.estudiantes }
-      : { nombre: '', categoria: '', profesorPrincipal: '', estudiantes: 0 };
+      ? {
+          nombre: d.nombre, categoria: d.categoria, profesorPrincipal: d.profesorPrincipal,
+          estudiantes: d.estudiantes, sede: d.sede || '',
+          horarioEntrenamiento: {
+            lunes: d.horarioEntrenamiento?.lunes || '', martes: d.horarioEntrenamiento?.martes || '',
+            miercoles: d.horarioEntrenamiento?.miercoles || '', jueves: d.horarioEntrenamiento?.jueves || '',
+            viernes: d.horarioEntrenamiento?.viernes || '', sabado: d.horarioEntrenamiento?.sabado || '',
+            domingo: d.horarioEntrenamiento?.domingo || '',
+          },
+        }
+      : this.divisionFormVacio();
     this.modalDivisionVisible = true;
   }
 
@@ -508,8 +556,8 @@ export class AdminComponent implements OnInit {
     this.partidoEditando = p || null;
     const nombreClub = this.siteConfig.tituloHeader || 'Santiago Wanderers';
     this.partidoForm = p
-      ? { local: p.local || nombreClub, visitante: p.visitante, fecha: p.fecha || '', hora: p.hora || '', resultado: p.resultado || '', sede: p.sede || '', tipo: p.tipo || 'proximo' }
-      : { local: nombreClub, visitante: '', fecha: '', hora: '', resultado: '', sede: '', tipo: 'proximo' };
+      ? { local: p.local || nombreClub, visitante: p.visitante, fecha: p.fecha || '', hora: p.hora || '', horaCitacion: p.horaCitacion || '', resultado: p.resultado || '', sede: p.sede || '', tipo: p.tipo || 'proximo' }
+      : { local: nombreClub, visitante: '', fecha: '', hora: '', horaCitacion: '', resultado: '', sede: '', tipo: 'proximo' };
     this.modalPartidoVisible = true;
   }
 
@@ -624,10 +672,17 @@ export class AdminComponent implements OnInit {
       () => {
         this.pagosService.updateEstadoPago(pago.id, estado).subscribe({
           next: () => {
-            this.pagosPendientes = this.pagosPendientes.filter(i => i.id !== pago.id);
+            if (aprobando) {
+              // Aprobado: sale de "pendientes" y pasa a la pestaña de aprobados.
+              this.pagosPendientes = this.pagosPendientes.filter(i => i.id !== pago.id);
+              this.cargarAprobados();
+            } else {
+              // Rechazado: se queda visible en "pendientes" (con su estado actualizado), no desaparece.
+              const item = this.pagosPendientes.find(i => i.id === pago.id);
+              if (item) item.estado = 'rechazado';
+            }
             if (this.pagoSeleccionado?.id === pago.id) { this.modalVoucherVisible = false; this.pagoSeleccionado = null; }
             this.toast('success', aprobando ? 'Pago aprobado' : 'Pago rechazado', `El pago de ${pago.alumno} fue procesado.`);
-            if (aprobando) this.cargarAprobados();
           },
           error: () => this.toast('error', 'Error', 'No se pudo actualizar el pago.')
         });
@@ -640,6 +695,7 @@ export class AdminComponent implements OnInit {
     this.http.get<any>(`${this.apiUrl}/config`).subscribe({
       next: (c: any) => {
         this.siteConfig.tituloHeader = c.tituloHeader || 'Escuela de Futbol - Inicio';
+        this.siteConfig.kickerHero = c.kickerHero || 'Escuela Familias del Fútbol';
         this.siteConfig.tituloBienvenida = c.tituloBienvenida || '¡Bienvenidos Crack!';
         this.siteConfig.subtituloBienvenida = c.subtituloBienvenida || 'Revisa las últimas novedades de tu club.';
         this.siteConfig.imagenesCarrusel = c.imagenesCarrusel || [];
@@ -727,6 +783,7 @@ export class AdminComponent implements OnInit {
   guardarTextos(): void {
     this.putConfig({
       tituloHeader:        this.siteConfig.tituloHeader,
+      kickerHero:          this.siteConfig.kickerHero,
       tituloBienvenida:    this.siteConfig.tituloBienvenida,
       subtituloBienvenida: this.siteConfig.subtituloBienvenida,
     });
@@ -913,7 +970,7 @@ export class AdminComponent implements OnInit {
       () => {
         this.http.post<any>(`${this.apiUrl}/admin/crear-cliente-ficha/${fichaId}`, {}, this.authHeaders()).subscribe({
           next: (res: any) => {
-            this.credencialesCliente = { email: res.email, passwordTemporal: res.passwordTemporal };
+            this.credencialesCliente = { email: res.email, correoEnviado: res.correoEnviado, linkActivacion: res.linkActivacion };
             this.modalFichaVisible = false;
             this.modalCredencialesVisible = true;
           },

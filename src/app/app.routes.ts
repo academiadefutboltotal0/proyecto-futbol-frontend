@@ -54,6 +54,10 @@ export const routes: Routes = [
     loadComponent: () => import('./ficha-temporada/ficha-temporada').then(m => m.FichaTemporadaComponent)
   },
   {
+    path: 'activar-cuenta/:token',
+    loadComponent: () => import('./activar-cuenta/activar-cuenta').then(m => m.ActivarCuentaComponent)
+  },
+  {
     path: '',
     redirectTo: 'inicio',
     pathMatch: 'full'

@@ -19,6 +19,10 @@ export class RendimientoService {
     return this.http.post(this.apiUrl, data, this.headers);
   }
 
+  editarRendimiento(id: string, data: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${id}`, data, this.headers);
+  }
+
   obtenerRendimientos(jugadorId: string): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/${jugadorId}`, this.headers);
   }
