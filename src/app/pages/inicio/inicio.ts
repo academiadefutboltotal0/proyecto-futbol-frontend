@@ -33,7 +33,6 @@ export class Inicio implements OnInit, AfterViewInit, OnDestroy {
     tituloHeader: '',
     tituloBienvenida: '',
     subtituloBienvenida: '',
-    imagenDestacada: '',
     imagenesCarrusel: [] as string[],
     imagenesGaleria: [] as GaleriaImg[],
     mostrarPopup: true,
@@ -43,7 +42,7 @@ export class Inicio implements OnInit, AfterViewInit, OnDestroy {
   };
 
   get imgDestacada(): string {
-    return this.siteConfig.imagenDestacada || 'media/KevinVasquez.png';
+    return this.siteConfig.imagenesCarrusel[0] || 'media/KevinVasquez.png';
   }
 
   get galeriaNumVisible(): number {
@@ -70,7 +69,6 @@ export class Inicio implements OnInit, AfterViewInit, OnDestroy {
           if (config.tituloBienvenida) this.siteConfig.tituloBienvenida = config.tituloBienvenida;
           if (config.subtituloBienvenida)
             this.siteConfig.subtituloBienvenida = config.subtituloBienvenida;
-          if (config.imagenDestacada) this.siteConfig.imagenDestacada = config.imagenDestacada;
           if (Array.isArray(config.imagenesCarrusel) && config.imagenesCarrusel.length > 0)
             this.siteConfig.imagenesCarrusel = config.imagenesCarrusel;
           if (Array.isArray(config.imagenesGaleria) && config.imagenesGaleria.length > 0)

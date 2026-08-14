@@ -30,7 +30,7 @@
 
 <!-- ========= HERO ========= -->
 <section class="hero-section">
-  <ng-container *ngIf="siteConfig.imagenesCarrusel.length > 0; else heroFallback">
+  <ng-container *ngIf="siteConfig.imagenesCarrusel.length > 1; else heroFallback">
     <p-carousel
       [value]="siteConfig.imagenesCarrusel"
       [numVisible]="1"
@@ -67,7 +67,7 @@
 </section>
 
 <!-- Welcome strip (only shown when carousel is active) -->
-<div class="welcome-strip" *ngIf="siteConfig.imagenesCarrusel.length > 0">
+<div class="welcome-strip" *ngIf="siteConfig.imagenesCarrusel.length > 1">
   <ng-container *ngIf="configCargada; else stripSkeleton">
     <h1>{{ siteConfig.tituloBienvenida }}</h1>
     <p>{{ siteConfig.subtituloBienvenida }}</p>

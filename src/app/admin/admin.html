@@ -648,30 +648,6 @@
           <input pInputText [(ngModel)]="siteConfig.subtituloBienvenida" style="width:100%;" placeholder="Ej: Revisa las últimas novedades de tu club." />
         </div>
 
-        <div class="config-field">
-          <label>Imagen destacada (panel lateral)</label>
-          <div class="img-preview-row">
-            <img
-              *ngIf="siteConfig.imagenDestacada"
-              [src]="siteConfig.imagenDestacada"
-              alt="Vista previa"
-              style="height:120px; border-radius:10px; object-fit:cover; border:1px solid rgba(57,211,83,0.25);" />
-            <img
-              *ngIf="!siteConfig.imagenDestacada"
-              src="media/KevinVasquez.png"
-              alt="Imagen actual"
-              style="height:120px; border-radius:10px; object-fit:cover; border:1px solid rgba(57,211,83,0.15); opacity:0.55;" />
-            <div style="display:flex; flex-direction:column; gap:0.5rem; justify-content:center;">
-              <span class="img-status-label">
-                {{ siteConfig.imagenDestacada ? 'Imagen personalizada activa' : 'Usando imagen por defecto' }}
-              </span>
-              <input type="file" accept="image/*" (change)="seleccionarImagenDestacada($event)"
-                style="font-size:0.88rem; color:rgba(233,247,234,0.75);" />
-              <small class="config-field">Se comprimirá automáticamente al subir.</small>
-            </div>
-          </div>
-        </div>
-
         <div>
           <p-button
             label="Guardar Cambios"
@@ -693,10 +669,11 @@
         </label>
       </div>
       <p style="color:rgba(233,247,234,0.5); font-size:0.85rem; margin:0 0 1rem;">
-        Las imágenes se comprimen automáticamente. Se mostrarán en la página de inicio como carrusel hero.
+        Estas son las fotos de portada de la página de inicio. Si subes solo una, se muestra fija; si subes
+        dos o más, se muestra como carrusel automático. Las imágenes se comprimen automáticamente.
       </p>
       <div *ngIf="siteConfig.imagenesCarrusel.length === 0" style="color:rgba(233,247,234,0.35); font-style:italic;">
-        No hay imágenes en el carrusel. Agrega la primera.
+        No hay ninguna foto de portada todavía. Agrega la primera.
       </div>
       <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:1rem;">
         <div *ngFor="let img of siteConfig.imagenesCarrusel; let i = index" style="position:relative; border-radius:10px; overflow:hidden; border:1px solid rgba(57,211,83,0.2);">

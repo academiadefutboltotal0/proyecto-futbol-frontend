@@ -191,7 +191,6 @@ export class AdminComponent implements OnInit {
     tituloHeader: '',
     tituloBienvenida: '',
     subtituloBienvenida: '',
-    imagenDestacada: '',
     imagenesCarrusel: [] as string[],
     imagenesGaleria: [] as { url: string; descripcion: string }[],
     mostrarPopup: true,
@@ -643,7 +642,6 @@ export class AdminComponent implements OnInit {
         this.siteConfig.tituloHeader = c.tituloHeader || 'Escuela de Futbol - Inicio';
         this.siteConfig.tituloBienvenida = c.tituloBienvenida || '¡Bienvenidos Crack!';
         this.siteConfig.subtituloBienvenida = c.subtituloBienvenida || 'Revisa las últimas novedades de tu club.';
-        this.siteConfig.imagenDestacada = c.imagenDestacada || '';
         this.siteConfig.imagenesCarrusel = c.imagenesCarrusel || [];
         this.siteConfig.imagenesGaleria = c.imagenesGaleria || [];
         this.siteConfig.mostrarPopup = c.mostrarPopup !== undefined ? c.mostrarPopup : true;
@@ -710,14 +708,6 @@ export class AdminComponent implements OnInit {
     input.value = '';
   }
 
-  async seleccionarImagenDestacada(event: Event): Promise<void> {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
-    if (!file) return;
-    this.siteConfig.imagenDestacada = await this.comprimirImagen(file, 1920, 0.92);
-    input.value = '';
-  }
-
   private putConfig(payload: object): void {
     this.guardandoConfig = true;
     this.http.put<any>(`${this.apiUrl}/config`, payload, this.authHeaders()).subscribe({
@@ -739,7 +729,6 @@ export class AdminComponent implements OnInit {
       tituloHeader:        this.siteConfig.tituloHeader,
       tituloBienvenida:    this.siteConfig.tituloBienvenida,
       subtituloBienvenida: this.siteConfig.subtituloBienvenida,
-      imagenDestacada:     this.siteConfig.imagenDestacada,
     });
   }
 
