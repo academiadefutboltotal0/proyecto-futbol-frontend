@@ -50,6 +50,8 @@ export class Inicio implements OnInit, AfterViewInit, OnDestroy {
     return Math.max(1, Math.min(this.siteConfig.imagenesGaleria.length, 5));
   }
 
+  galeriaActiveIndex = 0;
+
   private readonly apiUrl = environment.apiUrl;
 
   noticias: Noticia[] = [];

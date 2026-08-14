@@ -195,6 +195,7 @@
     <ng-container *ngIf="siteConfig.imagenesGaleria.length > 0; else noGaleria">
       <p-galleria
         [value]="siteConfig.imagenesGaleria"
+        [(activeIndex)]="galeriaActiveIndex"
         [numVisible]="galeriaNumVisible"
         [circular]="siteConfig.imagenesGaleria.length > 1"
         [showItemNavigators]="true"
@@ -202,7 +203,7 @@
         thumbnailsPosition="bottom"
         styleClass="galeria-component">
         <ng-template let-item pTemplate="item">
-          <img class="galeria-img-main" [src]="item.url" [alt]="item.descripcion || 'Imagen galería'" />
+          <img class="galeria-img-main" [src]="siteConfig.imagenesGaleria[galeriaActiveIndex]?.url" [alt]="siteConfig.imagenesGaleria[galeriaActiveIndex]?.descripcion || 'Imagen galería'" />
         </ng-template>
         <ng-template let-item pTemplate="thumbnail">
           <img class="galeria-thumb" [src]="item.url" [alt]="item.descripcion || 'Miniatura'" />
