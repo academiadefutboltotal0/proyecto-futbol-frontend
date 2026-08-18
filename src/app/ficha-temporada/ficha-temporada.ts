@@ -314,7 +314,16 @@ export class FichaTemporadaComponent implements OnInit {
             severity: 'error',
             summary: 'RUT duplicado',
             detail: msg || 'Este jugador ya está registrado.',
-            life: 5000
+            life: 6000
+          });
+        } else if (err?.status === 400 && msg) {
+          // RUT o WhatsApp inválido, u otro error de validación: se muestra el motivo real
+          // y se deja el mismo formulario (y el mismo link) para que lo corrija y reenvíe.
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Revisa los datos',
+            detail: msg,
+            life: 6000
           });
         } else {
           this.messageService.add({

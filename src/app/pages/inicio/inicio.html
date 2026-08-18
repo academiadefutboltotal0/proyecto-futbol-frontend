@@ -43,6 +43,17 @@
       <ng-template let-img pTemplate="item">
         <div class="hero-slide">
           <img [src]="img" alt="Imagen del club" />
+          <div class="hero-overlay">
+            <span class="hero-kicker">{{ siteConfig.kickerHero }}</span>
+            <ng-container *ngIf="configCargada; else heroSkeleton">
+              <h1 class="hero-title">{{ siteConfig.tituloBienvenida }}</h1>
+              <p class="hero-sub">{{ siteConfig.subtituloBienvenida }}</p>
+            </ng-container>
+            <ng-template #heroSkeleton>
+              <div class="sk sk-hero-title"></div>
+              <div class="sk sk-hero-sub"></div>
+            </ng-template>
+          </div>
         </div>
       </ng-template>
     </p-carousel>
@@ -53,11 +64,11 @@
       <img [src]="imgDestacada" alt="Imagen destacada del club" />
       <div class="hero-overlay">
         <span class="hero-kicker">{{ siteConfig.kickerHero }}</span>
-        <ng-container *ngIf="configCargada; else heroSkeleton">
+        <ng-container *ngIf="configCargada; else heroSkeleton2">
           <h1 class="hero-title">{{ siteConfig.tituloBienvenida }}</h1>
           <p class="hero-sub">{{ siteConfig.subtituloBienvenida }}</p>
         </ng-container>
-        <ng-template #heroSkeleton>
+        <ng-template #heroSkeleton2>
           <div class="sk sk-hero-title"></div>
           <div class="sk sk-hero-sub"></div>
         </ng-template>
@@ -65,18 +76,6 @@
     </div>
   </ng-template>
 </section>
-
-<!-- Welcome strip (only shown when carousel is active) -->
-<div class="welcome-strip" *ngIf="siteConfig.imagenesCarrusel.length > 1">
-  <ng-container *ngIf="configCargada; else stripSkeleton">
-    <h1>{{ siteConfig.tituloBienvenida }}</h1>
-    <p>{{ siteConfig.subtituloBienvenida }}</p>
-  </ng-container>
-  <ng-template #stripSkeleton>
-    <div class="sk sk-strip-title"></div>
-    <div class="sk sk-strip-sub"></div>
-  </ng-template>
-</div>
 
 <!-- ========= SECTIONS NAV ========= -->
 <nav class="sections-nav" aria-label="Secciones de la página">
