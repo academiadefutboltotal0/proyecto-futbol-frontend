@@ -214,8 +214,10 @@ export class AdminComponent implements OnInit {
     tituloPopup: '',
     cuerpoPopup: '',
     sedes: [] as string[],
+    horariosPorSede: [] as { sede: string; horarios: string[] }[],
   };
   nuevaSede = '';
+  nuevoHorarioTexto: { [sede: string]: string } = {};
   guardandoConfig = false;
   noticiasAdmin: any[] = [];
   noticiaForm: { titulo: string; descripcion: string; contenido: string; fecha: string; imagenUrl: string; categoria: string } = { titulo: '', descripcion: '', contenido: '', fecha: '', imagenUrl: '', categoria: '' };
@@ -705,6 +707,7 @@ export class AdminComponent implements OnInit {
         this.siteConfig.tituloPopup = c.tituloPopup || '';
         this.siteConfig.cuerpoPopup = c.cuerpoPopup || '';
         this.siteConfig.sedes = c.sedes?.length ? c.sedes : ['Viña del Mar', 'Olmué'];
+        this.siteConfig.horariosPorSede = c.horariosPorSede || [];
       },
       error: () => {},
     });
@@ -815,8 +818,34 @@ export class AdminComponent implements OnInit {
   }
 
   eliminarSede(i: number): void {
+    const nombre = this.siteConfig.sedes[i];
     this.siteConfig.sedes = this.siteConfig.sedes.filter((_, idx) => idx !== i);
-    this.putConfig({ sedes: this.siteConfig.sedes });
+    this.siteConfig.horariosPorSede = this.siteConfig.horariosPorSede.filter(h => h.sede !== nombre);
+    this.putConfig({ sedes: this.siteConfig.sedes, horariosPorSede: this.siteConfig.horariosPorSede });
+  }
+
+  horariosDeSede(sede: string): string[] {
+    return this.siteConfig.horariosPorSede.find(h => h.sede === sede)?.horarios || [];
+  }
+
+  agregarHorario(sede: string): void {
+    const texto = (this.nuevoHorarioTexto[sede] || '').trim();
+    if (!texto) return;
+    let entry = this.siteConfig.horariosPorSede.find(h => h.sede === sede);
+    if (!entry) {
+      entry = { sede, horarios: [] };
+      this.siteConfig.horariosPorSede = [...this.siteConfig.horariosPorSede, entry];
+    }
+    if (!entry.horarios.includes(texto)) entry.horarios = [...entry.horarios, texto];
+    this.nuevoHorarioTexto[sede] = '';
+    this.putConfig({ horariosPorSede: this.siteConfig.horariosPorSede });
+  }
+
+  eliminarHorario(sede: string, i: number): void {
+    const entry = this.siteConfig.horariosPorSede.find(h => h.sede === sede);
+    if (!entry) return;
+    entry.horarios = entry.horarios.filter((_, idx) => idx !== i);
+    this.putConfig({ horariosPorSede: this.siteConfig.horariosPorSede });
   }
 
   guardarConfig(): void {

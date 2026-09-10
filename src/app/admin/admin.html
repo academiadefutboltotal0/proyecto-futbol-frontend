@@ -35,7 +35,7 @@
     <button class="tab-btn" [class.active]="activeTab === 'pagos'"         (click)="setActiveTab('pagos')">Pagos Pendientes</button>
     <button class="tab-btn" [class.active]="activeTab === 'pagos-aprobados'" (click)="setActiveTab('pagos-aprobados')">Pagos Aprobados</button>
     <button class="tab-btn" [class.active]="activeTab === 'asistencia'"    (click)="setActiveTab('asistencia')">Libro Asistencia</button>
-    <button class="tab-btn" [class.active]="activeTab === 'inicio'"        (click)="setActiveTab('inicio')">Editar Inicio</button>
+    <button class="tab-btn" [class.active]="activeTab === 'inicio'"        (click)="setActiveTab('inicio')">Editar</button>
   </div>
 
   <!-- CONTENIDO DE ADMISION -->
@@ -791,9 +791,29 @@
       </p>
       <div style="display:flex; flex-direction:column; gap:0.75rem;">
         <div *ngFor="let sede of siteConfig.sedes; let i = index"
-          style="display:flex; align-items:center; gap:0.75rem; padding:0.5rem 0.75rem; background:rgba(57,211,83,0.06); border:1px solid rgba(57,211,83,0.15); border-radius:8px;">
-          <span style="flex:1;">{{ sede }}</span>
-          <p-button icon="pi pi-trash" size="small" severity="danger" (onClick)="eliminarSede(i)" pTooltip="Eliminar sede"></p-button>
+          style="padding:0.5rem 0.75rem; background:rgba(57,211,83,0.06); border:1px solid rgba(57,211,83,0.15); border-radius:8px;">
+          <div style="display:flex; align-items:center; gap:0.75rem;">
+            <span style="flex:1; font-weight:600;">{{ sede }}</span>
+            <p-button icon="pi pi-trash" size="small" severity="danger" (onClick)="eliminarSede(i)" pTooltip="Eliminar sede"></p-button>
+          </div>
+
+          <div style="margin-top:0.6rem; padding-left:0.25rem; display:flex; flex-direction:column; gap:0.4rem;">
+            <div *ngFor="let h of horariosDeSede(sede); let hi = index"
+              style="display:flex; align-items:center; gap:0.5rem;">
+              <i class="pi pi-clock" style="font-size:0.75rem; opacity:0.6;"></i>
+              <span style="flex:1; font-size:0.85rem;">{{ h }}</span>
+              <p-button icon="pi pi-times" size="small" severity="danger" [text]="true" (onClick)="eliminarHorario(sede, hi)" pTooltip="Eliminar horario"></p-button>
+            </div>
+            <div *ngIf="horariosDeSede(sede).length === 0" style="font-size:0.8rem; color:rgba(233,247,234,0.35); font-style:italic;">
+              Sin horarios configurados.
+            </div>
+            <div style="display:flex; gap:0.5rem; margin-top:0.15rem;">
+              <input pInputText [(ngModel)]="nuevoHorarioTexto[sede]" placeholder="Ej: Martes 17:00 hrs"
+                style="flex:1; font-size:0.85rem;" (keyup.enter)="agregarHorario(sede)" />
+              <p-button label="Agregar horario" icon="pi pi-plus" size="small" severity="secondary"
+                (onClick)="agregarHorario(sede)" [disabled]="!nuevoHorarioTexto[sede]?.trim()"></p-button>
+            </div>
+          </div>
         </div>
         <div *ngIf="siteConfig.sedes.length === 0" style="color:rgba(233,247,234,0.35); font-style:italic;">
           No hay sedes registradas.

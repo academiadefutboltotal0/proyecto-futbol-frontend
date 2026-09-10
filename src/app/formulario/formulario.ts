@@ -104,6 +104,13 @@ export class FormularioComponent implements OnInit {
         if (c.sedes?.length) {
           this.sedesOpciones = c.sedes.map((s: string) => ({ label: s, value: s }));
         }
+        if (c.horariosPorSede?.length) {
+          const mapa: { [sede: string]: { label: string; value: string }[] } = {};
+          c.horariosPorSede.forEach((h: { sede: string; horarios: string[] }) => {
+            mapa[h.sede] = (h.horarios || []).map(texto => ({ label: texto, value: texto }));
+          });
+          this.horariosPorSede = mapa;
+        }
       },
       error: () => {}
     });
