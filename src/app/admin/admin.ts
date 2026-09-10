@@ -201,7 +201,7 @@ export class AdminComponent implements OnInit {
 
 
   /* ── INICIO (config + noticias) ───────────────── */
-  activeTab = 'solicitudes';
+  activeTab = 'Admision';
   siteConfig = {
     tituloHeader: '',
     kickerHero: '',

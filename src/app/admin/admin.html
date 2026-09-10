@@ -25,7 +25,7 @@
 
   <!-- MENÚ DE NAVEGACIÓN -->
   <div class="menu-tabs">
-    <button class="tab-btn" [class.active]="activeTab === 'solicitudes'"    (click)="setActiveTab('solicitudes')">Solicitudes</button>
+    <button class="tab-btn" [class.active]="activeTab === 'Admision'"    (click)="setActiveTab('Admision')">Admisión</button>
     <button class="tab-btn" [class.active]="activeTab === 'fichas'"        (click)="setActiveTab('fichas')">Ficha-Temporada</button>
     <button class="tab-btn" [class.active]="activeTab === 'jugadores'"     (click)="setActiveTab('jugadores')">Jugadores</button>
     <button class="tab-btn" [class.active]="activeTab === 'arqueros'"      (click)="setActiveTab('arqueros')">Arqueros</button>
@@ -38,11 +38,11 @@
     <button class="tab-btn" [class.active]="activeTab === 'inicio'"        (click)="setActiveTab('inicio')">Editar Inicio</button>
   </div>
 
-  <!-- CONTENIDO DE SOLICITUDES -->
-  <div [hidden]="activeTab !== 'solicitudes'" class="tab-content">
+  <!-- CONTENIDO DE ADMISION -->
+  <div [hidden]="activeTab !== 'Admision'" class="tab-content">
     <p-card>
       <div class="sec-header">
-        <h3>Solicitudes de Inscripción</h3>
+        <h3>Admisión de Inscripción</h3>
       </div>
 
       <!-- BARRA DE FILTROS -->
