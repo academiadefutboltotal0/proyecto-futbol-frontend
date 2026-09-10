@@ -184,6 +184,23 @@
             </small>
           </div>
 
+          <div class="campo">
+            <label>Horario <span class="error">*</span></label>
+            <p-select
+              [options]="horarioOpciones"
+              formControlName="horarioSede"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="Seleccione horario"
+              appendTo="body"
+              [disabled]="!formulario.get('pupilo.sede')?.value"
+              [ngClass]="{'ng-invalid ng-dirty': campoInvalido('pupilo','horarioSede')}">
+            </p-select>
+            <small *ngIf="campoInvalido('pupilo','horarioSede')" class="error">
+              El horario es obligatorio
+            </small>
+          </div>
+
         </div>
       </div>
       <button

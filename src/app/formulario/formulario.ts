@@ -36,6 +36,16 @@ export class FormularioComponent implements OnInit {
     { label: 'Olmué', value: 'Olmué' }
   ];
 
+  horariosPorSede: { [sede: string]: { label: string; value: string }[] } = {
+    'Viña del Mar': [
+      { label: 'Martes 17:00 hrs', value: 'Martes 17:00 hrs' },
+      { label: 'Sábado 10:00 hrs', value: 'Sábado 10:00 hrs' }
+    ],
+    'Olmué': [
+      { label: 'Miércoles y Viernes 17:00 hrs', value: 'Miércoles y Viernes 17:00 hrs' }
+    ]
+  };
+
   generos = [
     { name: 'Masculino' },
     { name: 'Femenino' }
@@ -74,12 +84,17 @@ export class FormularioComponent implements OnInit {
         genero:          [null, Validators.required],
         direccion:       ['', [Validators.required, Validators.maxLength(150)]],
         comuna:          [null, Validators.required],
-        sede:            ['', Validators.required]
+        sede:            ['', Validators.required],
+        horarioSede:     ['', Validators.required]
       })
     });
 
     this.formulario.get('pupilo.rut')?.valueChanges.subscribe(value => {
       this.rutInvalido = !this.validarRutFormato(value);
+    });
+
+    this.formulario.get('pupilo.sede')?.valueChanges.subscribe(() => {
+      this.formulario.get('pupilo.horarioSede')?.setValue('');
     });
   }
 
@@ -118,6 +133,11 @@ export class FormularioComponent implements OnInit {
     const dvCalculado = resto === 0 ? '0' : resto === 1 ? 'K' : (11 - resto).toString();
 
     return dv === dvCalculado;
+  }
+
+  get horarioOpciones(): { label: string; value: string }[] {
+    const sede = this.formulario.get('pupilo.sede')?.value;
+    return this.horariosPorSede[sede] || [];
   }
 
   campoInvalido(grupo: string, campo: string): boolean {
