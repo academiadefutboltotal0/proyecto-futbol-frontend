@@ -1177,6 +1177,12 @@ export class AdminComponent implements OnInit {
     return [{ label: 'Todas', value: null }, ...Array.from(opcionesMap.values())];
   }
 
+  /* Solo las sedes configuradas (sin valores sucios de datos viejos como "Demo" o
+     "VALPARAÍSO"). Se usa para ASIGNAR sede a un jugador o división, no para filtrar. */
+  get sedesAsignables() {
+    return this.siteConfig.sedes.map((s: string) => ({ label: s, value: s }));
+  }
+
   limpiarFiltrosJugadores() { this.filtrosJugadores = { texto: '', categoria: null, posicion: null, sede: null }; }
 
   verRendimiento(ficha: any) {

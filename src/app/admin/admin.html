@@ -1290,7 +1290,7 @@
       </div>
       <div style="display:flex; flex-direction:column; gap:0.25rem;">
         <label style="font-weight:600;">Sede</label>
-        <p-select [options]="sedeJugadorOpciones" [(ngModel)]="divisionForm.sede" optionLabel="label" optionValue="value" placeholder="Seleccionar sede" appendTo="body" style="width:100%;"></p-select>
+        <p-select [options]="sedesAsignables" [(ngModel)]="divisionForm.sede" optionLabel="label" optionValue="value" placeholder="Seleccionar sede" appendTo="body" style="width:100%;"></p-select>
       </div>
     </div>
 
@@ -1536,7 +1536,7 @@
         </div>
         <div style="display:flex;flex-direction:column;gap:0.2rem;">
           <label style="font-weight:600;">Sede</label>
-          <p-select [options]="sedeJugadorOpciones" [(ngModel)]="fichaEditandoForm.sede" optionLabel="label" optionValue="value" placeholder="Seleccionar sede" appendTo="body" style="width:100%;"></p-select>
+          <p-select [options]="sedesAsignables" [(ngModel)]="fichaEditandoForm.sede" optionLabel="label" optionValue="value" placeholder="Seleccionar sede" appendTo="body" style="width:100%;"></p-select>
         </div>
         <div style="display:flex;flex-direction:column;gap:0.2rem;">
           <label style="font-weight:600;">Posición en la cancha</label>
