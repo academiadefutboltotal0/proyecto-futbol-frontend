@@ -248,13 +248,22 @@
 .hero-slide::before {
   content: '';
   position: absolute;
-  inset: -30px;
+  inset: -20px;
   background-image: inherit;
   background-size: cover;
   background-position: center;
-  filter: blur(35px) saturate(1.1) brightness(0.4);
-  transform: scale(1.1);
+  filter: blur(20px) saturate(1.1) brightness(0.6);
+  transform: scale(1.08);
   z-index: 0;
+}
+
+.hero-slide::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(10, 46, 24, 0.45) 0%, rgba(26, 122, 62, 0.3) 100%);
+  z-index: 0;
+  pointer-events: none;
 }
 
 .hero-slide img {
@@ -308,13 +317,22 @@
 .hero-fallback::before {
   content: '';
   position: absolute;
-  inset: -30px;
+  inset: -20px;
   background-image: inherit;
   background-size: cover;
   background-position: center;
-  filter: blur(35px) saturate(1.1) brightness(0.4);
-  transform: scale(1.1);
+  filter: blur(20px) saturate(1.1) brightness(0.6);
+  transform: scale(1.08);
   z-index: 0;
+}
+
+.hero-fallback::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(10, 46, 24, 0.45) 0%, rgba(26, 122, 62, 0.3) 100%);
+  z-index: 0;
+  pointer-events: none;
 }
 
 .hero-fallback img {
@@ -870,7 +888,7 @@
 
 .postulaciones-dialog-content h1 {
   margin: 0;
-  color: #f4f7f3;
+  color: var(--dlg-text);
   font-size: 1.1rem;
   line-height: 1.4;
 }
@@ -965,12 +983,6 @@
 :host ::ng-deep .noticia-dialog .p-dialog-content {
   background: var(--dlg-body);
   color: var(--dlg-text);
-}
-
-/* Fondo verde (color del escudo) alrededor de la imagen del popup de aviso */
-:host ::ng-deep .postulaciones-dialog .p-dialog-content {
-  background: linear-gradient(135deg, #0a2e18 0%, #1a7a3e 50%, #0a2e18 100%) !important;
-  color: #f4f7f3;
 }
 
 :host ::ng-deep .postulaciones-dialog .p-dialog-header-close,
