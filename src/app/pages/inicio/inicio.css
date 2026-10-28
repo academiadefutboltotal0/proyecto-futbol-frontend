@@ -819,6 +819,7 @@
 
 .postulaciones-dialog-content img {
   width: 100%;
+  max-height: 320px;
   border-radius: 12px;
   object-fit: cover;
 }
@@ -839,8 +840,8 @@
 
 .imagen-popup-content img {
   display: block;
-  width: 100%;
-  max-width: 960px;
+  width: 80%;
+  max-width: 50%;
   height: auto;
   border-radius: 18px;
   object-fit: cover;
