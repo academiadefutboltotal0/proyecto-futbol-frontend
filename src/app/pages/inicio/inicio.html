@@ -86,6 +86,7 @@
     Noticias
   </button>
   <button
+    *ngIf="partidos.length > 0"
     type="button"
     [class.active]="seccionActiva === 'partidos'"
     (click)="scrollTo('partidos')">
@@ -150,11 +151,11 @@
 </section>
 
 <!-- ========= PARTIDOS ========= -->
-<section id="partidos" class="content-section section-alt">
+<section id="partidos" class="content-section section-alt" *ngIf="partidos.length > 0">
   <div class="section-inner">
     <h2 class="section-heading">Partidos</h2>
 
-    <div class="partidos-list" *ngIf="partidos.length > 0; else noPartidos">
+    <div class="partidos-list">
       <div class="partido-card" *ngFor="let partido of partidos">
         <div class="partido-header">
           <span class="partido-tipo" [class.resultado]="partido.tipo === 'resultado'">
@@ -183,10 +184,6 @@
         </div>
       </div>
     </div>
-
-    <ng-template #noPartidos>
-      <p class="section-empty">No hay partidos registrados por el momento.</p>
-    </ng-template>
   </div>
 </section>
 
