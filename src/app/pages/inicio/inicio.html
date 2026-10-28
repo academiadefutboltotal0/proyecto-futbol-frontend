@@ -41,7 +41,7 @@
       [showIndicators]="true"
       styleClass="hero-carousel">
       <ng-template let-img pTemplate="item">
-        <div class="hero-slide">
+        <div class="hero-slide" [style.background-image]="'url(' + img + ')'">
           <img [src]="img" alt="Imagen del club" />
           <div class="hero-overlay">
             <span class="hero-kicker">{{ siteConfig.kickerHero }}</span>
@@ -60,7 +60,7 @@
   </ng-container>
 
   <ng-template #heroFallback>
-    <div class="hero-fallback">
+    <div class="hero-fallback" [style.background-image]="'url(' + imgDestacada + ')'">
       <img [src]="imgDestacada" alt="Imagen destacada del club" />
       <div class="hero-overlay">
         <span class="hero-kicker">{{ siteConfig.kickerHero }}</span>
