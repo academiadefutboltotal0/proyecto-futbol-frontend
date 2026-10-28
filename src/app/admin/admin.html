@@ -31,7 +31,6 @@
     <button class="tab-btn" [class.active]="activeTab === 'arqueros'"      (click)="setActiveTab('arqueros')">Arqueros</button>
     <button class="tab-btn" [class.active]="activeTab === 'profesores'"    (click)="setActiveTab('profesores')">Profesores</button>
     <button class="tab-btn" [class.active]="activeTab === 'divisiones'"    (click)="setActiveTab('divisiones')">Divisiones</button>
-    <button class="tab-btn" [class.active]="activeTab === 'partidos'"      (click)="setActiveTab('partidos')">Partidos</button>
     <button class="tab-btn" [class.active]="activeTab === 'pagos'"         (click)="setActiveTab('pagos')">Pagos Pendientes</button>
     <button class="tab-btn" [class.active]="activeTab === 'pagos-aprobados'" (click)="setActiveTab('pagos-aprobados')">Pagos Aprobados</button>
     <button class="tab-btn" [class.active]="activeTab === 'asistencia'"    (click)="setActiveTab('asistencia')">Libro Asistencia</button>
@@ -298,66 +297,6 @@
         </ng-template>
         <ng-template pTemplate="emptymessage">
           <tr><td colspan="6" style="text-align:center; padding:2rem;">No hay divisiones registradas. Agrega la primera.</td></tr>
-        </ng-template>
-      </p-table>
-    </p-card>
-  </div>
-
-  <!-- CONTENIDO DE PARTIDOS -->
-  <div [hidden]="activeTab !== 'partidos'" class="tab-content">
-    <p-card>
-      <div class="sec-header">
-        <h3>Partidos</h3>
-        <p-button label="Agregar Partido" icon="pi pi-plus" (onClick)="abrirModalPartido()"></p-button>
-      </div>
-
-      <div class="filter-bar">
-        <div class="filter-field grow">
-          <label>Buscar</label>
-          <input pInputText [(ngModel)]="filtrosPartidos.texto" placeholder="Local, visitante..." style="width:100%;" />
-        </div>
-        <div class="filter-field medium">
-          <label>Tipo</label>
-          <p-select [options]="tipoPartidoFiltroOpciones" [(ngModel)]="filtrosPartidos.tipo" optionLabel="label" optionValue="value" placeholder="Todos"></p-select>
-        </div>
-        <p-button label="Limpiar" icon="pi pi-filter-slash" severity="secondary" (onClick)="limpiarFiltrosPartidos()"></p-button>
-      </div>
-      <p class="result-count">Mostrando {{ partidosFiltrados.length }} de {{ partidos.length }} partidos</p>
-
-      <p-table [value]="partidosFiltrados" [paginator]="true" [rows]="10">
-        <ng-template pTemplate="header">
-          <tr>
-            <th>Local</th>
-            <th>Visitante</th>
-            <th>Fecha</th>
-            <th>Hora</th>
-            <th>Resultado</th>
-            <th>Sede</th>
-            <th>Tipo</th>
-            <th>Acciones</th>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-p>
-          <tr>
-            <td>{{ p.local }}</td>
-            <td>{{ p.visitante }}</td>
-            <td>{{ p.fecha | date:'dd/MM/yyyy' }}</td>
-            <td>{{ p.hora || '—' }}</td>
-            <td>{{ p.resultado || '—' }}</td>
-            <td>{{ p.sede || '—' }}</td>
-            <td>
-              <p-tag [value]="p.tipo === 'resultado' ? 'Resultado' : 'Próximo'" [severity]="p.tipo === 'resultado' ? 'success' : 'info'"></p-tag>
-            </td>
-            <td>
-              <div style="display:flex; gap:0.5rem;">
-                <p-button icon="pi pi-pencil" size="small" severity="secondary" (onClick)="abrirModalPartido(p)" pTooltip="Editar"></p-button>
-                <p-button icon="pi pi-trash" size="small" severity="danger" (onClick)="eliminarPartido(p._id)" pTooltip="Eliminar"></p-button>
-              </div>
-            </td>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="emptymessage">
-          <tr><td colspan="8" style="text-align:center; padding:2rem;">No hay partidos registrados. Agrega el primero.</td></tr>
         </ng-template>
       </p-table>
     </p-card>
@@ -872,6 +811,64 @@
           <p-button label="Guardar popup" icon="pi pi-save" [loading]="guardandoConfig" (onClick)="guardarPopup()"></p-button>
         </div>
       </div>
+    </p-card>
+
+    <!-- Partidos -->
+    <p-card>
+      <div class="sec-header">
+        <h3>Partidos</h3>
+        <p-button label="Agregar Partido" icon="pi pi-plus" (onClick)="abrirModalPartido()"></p-button>
+      </div>
+
+      <div class="filter-bar">
+        <div class="filter-field grow">
+          <label>Buscar</label>
+          <input pInputText [(ngModel)]="filtrosPartidos.texto" placeholder="Local, visitante..." style="width:100%;" />
+        </div>
+        <div class="filter-field medium">
+          <label>Tipo</label>
+          <p-select [options]="tipoPartidoFiltroOpciones" [(ngModel)]="filtrosPartidos.tipo" optionLabel="label" optionValue="value" placeholder="Todos"></p-select>
+        </div>
+        <p-button label="Limpiar" icon="pi pi-filter-slash" severity="secondary" (onClick)="limpiarFiltrosPartidos()"></p-button>
+      </div>
+      <p class="result-count">Mostrando {{ partidosFiltrados.length }} de {{ partidos.length }} partidos</p>
+
+      <p-table [value]="partidosFiltrados" [paginator]="true" [rows]="10">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Local</th>
+            <th>Visitante</th>
+            <th>Fecha</th>
+            <th>Hora</th>
+            <th>Resultado</th>
+            <th>Sede</th>
+            <th>Tipo</th>
+            <th>Acciones</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-p>
+          <tr>
+            <td>{{ p.local }}</td>
+            <td>{{ p.visitante }}</td>
+            <td>{{ p.fecha | date:'dd/MM/yyyy' }}</td>
+            <td>{{ p.hora || '—' }}</td>
+            <td>{{ p.resultado || '—' }}</td>
+            <td>{{ p.sede || '—' }}</td>
+            <td>
+              <p-tag [value]="p.tipo === 'resultado' ? 'Resultado' : 'Próximo'" [severity]="p.tipo === 'resultado' ? 'success' : 'info'"></p-tag>
+            </td>
+            <td>
+              <div style="display:flex; gap:0.5rem;">
+                <p-button icon="pi pi-pencil" size="small" severity="secondary" (onClick)="abrirModalPartido(p)" pTooltip="Editar"></p-button>
+                <p-button icon="pi pi-trash" size="small" severity="danger" (onClick)="eliminarPartido(p._id)" pTooltip="Eliminar"></p-button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr><td colspan="8" style="text-align:center; padding:2rem;">No hay partidos registrados. Agrega el primero.</td></tr>
+        </ng-template>
+      </p-table>
     </p-card>
 
   </div>
