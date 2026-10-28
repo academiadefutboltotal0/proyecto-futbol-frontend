@@ -869,16 +869,29 @@
 
 .noticia-detalle-meta { display: flex; align-items: center; gap: 0.75rem; }
 
+/* El fondo del dialogo (.p-dialog-content en styles.css) es siempre oscuro, sin importar
+   el tema claro/oscuro de la pagina — por eso este texto no puede usar var(--dlg-text)
+   (que cambia con el tema) y necesita colores claros fijos para seguir siendo legible. */
+.noticia-detalle-meta .news-tag {
+  background: rgba(133, 175, 239, 0.15);
+  color: #85afef;
+  border-color: rgba(133, 175, 239, 0.3);
+}
+
+.noticia-detalle-meta .news-date {
+  color: rgba(220, 232, 255, 0.6);
+}
+
 .noticia-detalle-titulo {
   margin: 0;
-  color: var(--dlg-text);
+  color: #f4f7f3;
   font-size: 1.4rem;
   line-height: 1.2;
 }
 
 .noticia-detalle-texto {
   margin: 0;
-  color: var(--dlg-text);
+  color: #f4f7f3;
   opacity: 0.85;
   line-height: 1.7;
 }
