@@ -126,6 +126,7 @@
           <img
             class="news-card-img"
             [src]="noticia.imagenUrl"
+            [style.object-position]="noticia.imagenPosicion || '50% 50%'"
             [alt]="noticia.titulo" />
         </div>
         <div class="news-card-body">
@@ -281,6 +282,7 @@
       *ngIf="noticiaSeleccionada.imagenUrl"
       class="noticia-detalle-img"
       [src]="noticiaSeleccionada.imagenUrl"
+      [style.object-position]="noticiaSeleccionada.imagenPosicion || '50% 50%'"
       [alt]="noticiaSeleccionada.titulo" />
     <div class="noticia-detalle-meta">
       <span class="news-tag">{{ noticiaSeleccionada.categoria }}</span>

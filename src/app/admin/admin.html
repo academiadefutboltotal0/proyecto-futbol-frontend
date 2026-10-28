@@ -1374,9 +1374,24 @@
           <i class="pi pi-image"></i> Subir imagen
           <input type="file" accept="image/*" style="display:none;" (change)="seleccionarImagenNoticia($event)" />
         </label>
-        <div *ngIf="noticiaForm.imagenUrl" style="margin-top:.25rem;">
-          <img [src]="noticiaForm.imagenUrl" alt="Preview" style="max-width:220px;max-height:130px;border-radius:8px;object-fit:cover;border:1px solid rgba(57,211,83,.2);" />
-          <div style="margin-top:.4rem;">
+        <div *ngIf="noticiaForm.imagenUrl" style="margin-top:.25rem; display:flex; flex-direction:column; gap:.5rem;">
+          <label style="font-size:.78rem; opacity:.65;">Vista previa — así se ve en la tarjeta. Clic o arrastra sobre la imagen para elegir qué parte mostrar.</label>
+          <div
+            style="position:relative; width:100%; max-width:320px; aspect-ratio:16/9; border-radius:12px; overflow:hidden; border:1px solid rgba(57,211,83,.25); cursor:crosshair; touch-action:none;"
+            (mousedown)="iniciarArrastrePosicionNoticia($event)"
+            (mousemove)="moverArrastrePosicionNoticia($event)"
+            (mouseup)="terminarArrastrePosicionNoticia()"
+            (mouseleave)="terminarArrastrePosicionNoticia()"
+            (touchstart)="iniciarArrastrePosicionNoticia($event)"
+            (touchmove)="moverArrastrePosicionNoticia($event)"
+            (touchend)="terminarArrastrePosicionNoticia()">
+            <img [src]="noticiaForm.imagenUrl" alt="Preview" [style.object-position]="noticiaForm.imagenPosicion"
+              style="width:100%; height:100%; object-fit:cover; display:block; pointer-events:none; user-select:none;" />
+            <div [style.left]="imagenNoticiaPosX" [style.top]="imagenNoticiaPosY"
+              style="position:absolute; width:14px; height:14px; margin:-7px 0 0 -7px; border-radius:50%; border:2px solid #fff; background:rgba(22,163,74,.85); box-shadow:0 0 4px rgba(0,0,0,.4); pointer-events:none;"></div>
+          </div>
+          <div style="display:flex; gap:.5rem; flex-wrap:wrap;">
+            <button pButton type="button" label="Centrar" icon="pi pi-replay" severity="secondary" size="small" (click)="noticiaForm.imagenPosicion='50% 50%'"></button>
             <button pButton type="button" label="Quitar imagen" icon="pi pi-times" severity="danger" size="small" (click)="noticiaForm.imagenUrl=''"></button>
           </div>
         </div>

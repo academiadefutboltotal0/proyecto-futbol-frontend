@@ -218,7 +218,8 @@ export class AdminComponent implements OnInit {
   nuevaSede = '';
   guardandoConfig = false;
   noticiasAdmin: any[] = [];
-  noticiaForm: { titulo: string; descripcion: string; contenido: string; fecha: string; imagenUrl: string; categoria: string } = { titulo: '', descripcion: '', contenido: '', fecha: '', imagenUrl: '', categoria: '' };
+  noticiaForm: { titulo: string; descripcion: string; contenido: string; fecha: string; imagenUrl: string; imagenPosicion: string; categoria: string } = { titulo: '', descripcion: '', contenido: '', fecha: '', imagenUrl: '', imagenPosicion: '50% 50%', categoria: '' };
+  arrastrandoImagenNoticia = false;
   noticiaEditando: any = null;
   modalNoticiaVisible = false;
   categoriasOpciones = [
@@ -831,8 +832,8 @@ export class AdminComponent implements OnInit {
     this.noticiaEditando = n || null;
     const hoy = new Date().toISOString().split('T')[0];
     this.noticiaForm = n
-      ? { titulo: n.titulo, descripcion: n.descripcion, contenido: n.contenido || '', fecha: n.fecha ? n.fecha.split('T')[0] : hoy, imagenUrl: n.imagenUrl, categoria: n.categoria }
-      : { titulo: '', descripcion: '', contenido: '', fecha: hoy, imagenUrl: '', categoria: '' };
+      ? { titulo: n.titulo, descripcion: n.descripcion, contenido: n.contenido || '', fecha: n.fecha ? n.fecha.split('T')[0] : hoy, imagenUrl: n.imagenUrl, imagenPosicion: n.imagenPosicion || '50% 50%', categoria: n.categoria }
+      : { titulo: '', descripcion: '', contenido: '', fecha: hoy, imagenUrl: '', imagenPosicion: '50% 50%', categoria: '' };
     this.modalNoticiaVisible = true;
   }
 
@@ -841,7 +842,41 @@ export class AdminComponent implements OnInit {
     const file = input.files?.[0];
     if (!file) return;
     this.noticiaForm.imagenUrl = await this.comprimirImagen(file, 1200, 0.88);
+    this.noticiaForm.imagenPosicion = '50% 50%';
     input.value = '';
+  }
+
+  /* Deja elegir el punto focal de la imagen (clic/arrastre sobre la vista previa) para que no se corte lo importante al recortarla en 16:9. */
+  ajustarPosicionImagenNoticia(event: MouseEvent | TouchEvent): void {
+    const contenedor = (event.currentTarget as HTMLElement);
+    const rect = contenedor.getBoundingClientRect();
+    const punto = 'touches' in event ? event.touches[0] : event;
+    const x = Math.min(100, Math.max(0, ((punto.clientX - rect.left) / rect.width) * 100));
+    const y = Math.min(100, Math.max(0, ((punto.clientY - rect.top) / rect.height) * 100));
+    this.noticiaForm.imagenPosicion = `${x.toFixed(0)}% ${y.toFixed(0)}%`;
+  }
+
+  iniciarArrastrePosicionNoticia(event: MouseEvent | TouchEvent): void {
+    this.arrastrandoImagenNoticia = true;
+    this.ajustarPosicionImagenNoticia(event);
+  }
+
+  moverArrastrePosicionNoticia(event: MouseEvent | TouchEvent): void {
+    if (!this.arrastrandoImagenNoticia) return;
+    event.preventDefault();
+    this.ajustarPosicionImagenNoticia(event);
+  }
+
+  terminarArrastrePosicionNoticia(): void {
+    this.arrastrandoImagenNoticia = false;
+  }
+
+  get imagenNoticiaPosX(): string {
+    return this.noticiaForm.imagenPosicion.split(' ')[0] || '50%';
+  }
+
+  get imagenNoticiaPosY(): string {
+    return this.noticiaForm.imagenPosicion.split(' ')[1] || '50%';
   }
 
   guardarNoticia(): void {

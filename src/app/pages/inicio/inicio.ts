@@ -186,6 +186,7 @@ export interface Noticia {
   contenido?: string;
   fecha: string;
   imagenUrl: string;
+  imagenPosicion?: string;
   categoria: 'Entrenamiento' | 'Partido' | 'Evento';
 }
 
