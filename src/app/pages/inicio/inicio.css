@@ -261,7 +261,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(10, 46, 24, 0.45) 0%, rgba(26, 122, 62, 0.3) 100%);
+  background: linear-gradient(135deg, var(--hero-tint-a, rgba(10, 46, 24, 0.45)) 0%, var(--hero-tint-b, rgba(26, 122, 62, 0.3)) 100%);
   z-index: 0;
   pointer-events: none;
 }
@@ -274,6 +274,26 @@
   object-fit: contain;
   display: block;
   filter: saturate(1.1) brightness(0.92);
+}
+
+/* Modo "rellenar pantalla": sin fondo difuminado, la foto se recorta a pantalla completa */
+.hero-slide.hero-slide-cover::before,
+.hero-slide.hero-slide-cover::after {
+  display: none;
+}
+
+.hero-slide.hero-slide-cover img {
+  object-fit: cover;
+  filter: saturate(1.1) brightness(0.75);
+}
+
+/* Modo "ver completa" sin difuminado: fondo solido degradado en vez de la foto borrosa */
+.hero-slide.hero-slide-noblur::before {
+  display: none;
+}
+
+.hero-slide.hero-slide-noblur::after {
+  background: linear-gradient(135deg, var(--hero-tint-solid-a, #0a2e18) 0%, var(--hero-tint-solid-b, #1a7a3e) 100%);
 }
 
 :host ::ng-deep .hero-carousel .p-carousel-prev,
@@ -303,46 +323,6 @@
 
 :host ::ng-deep .hero-carousel .p-carousel-indicator.p-highlight button {
   background: #ffffff !important;
-}
-
-.hero-fallback {
-  width: 100%;
-  height: 70vh;
-  position: relative;
-  overflow: hidden;
-  background-size: cover;
-  background-position: center;
-}
-
-.hero-fallback::before {
-  content: '';
-  position: absolute;
-  inset: -20px;
-  background-image: inherit;
-  background-size: cover;
-  background-position: center;
-  filter: blur(20px) saturate(1.1) brightness(0.6);
-  transform: scale(1.08);
-  z-index: 0;
-}
-
-.hero-fallback::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, rgba(10, 46, 24, 0.45) 0%, rgba(26, 122, 62, 0.3) 100%);
-  z-index: 0;
-  pointer-events: none;
-}
-
-.hero-fallback img {
-  position: relative;
-  z-index: 1;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  display: block;
-  filter: saturate(1.1) brightness(0.92);
 }
 
 .hero-overlay {
@@ -1019,7 +999,6 @@
   .hero-section { min-height: 55vh; }
   :host ::ng-deep .hero-carousel .p-carousel-content { height: 55vh; }
   .hero-slide { height: 55vh; }
-  .hero-fallback { height: 55vh; }
   .sections-nav { justify-content: flex-start; }
   .sections-nav button { padding: 0.85rem 1.25rem; }
   .content-section { padding: 2.5rem 1rem; }

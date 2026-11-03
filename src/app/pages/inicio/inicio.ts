@@ -7,6 +7,7 @@ import { ButtonModule } from 'primeng/button';
 import { CarouselModule } from 'primeng/carousel';
 import { DialogModule } from 'primeng/dialog';
 import { GalleriaModule } from 'primeng/galleria';
+import { CarruselImg, normalizarImagenCarrusel } from '../../models/carrusel';
 
 @Component({
   selector: 'app-inicio',
@@ -34,7 +35,7 @@ export class Inicio implements OnInit, AfterViewInit, OnDestroy {
     kickerHero: 'Escuela Familias del Fútbol',
     tituloBienvenida: '',
     subtituloBienvenida: '',
-    imagenesCarrusel: [] as string[],
+    imagenesCarrusel: [] as CarruselImg[],
     imagenesGaleria: [] as GaleriaImg[],
     mostrarPopup: true,
     imagenPopup: '',
@@ -43,7 +44,35 @@ export class Inicio implements OnInit, AfterViewInit, OnDestroy {
   };
 
   get imgDestacada(): string {
-    return this.siteConfig.imagenesCarrusel[0] || 'media/KevinVasquez.png';
+    return this.siteConfig.imagenesCarrusel[0]?.url || 'media/KevinVasquez.png';
+  }
+
+  /* Siempre al menos 1 imagen (placeholder si no hay ninguna configurada) para que el hero nunca quede vacío. */
+  get heroImages(): CarruselImg[] {
+    if (this.siteConfig.imagenesCarrusel.length === 0) {
+      return [{ url: 'media/KevinVasquez.png', modo: 'contain', posicion: '50% 50%', blur: true, color: '#1a7a3e' }];
+    }
+    return this.siteConfig.imagenesCarrusel;
+  }
+
+  heroTintA(color: string): string { return this.hexToRgba(color || '#1a7a3e', 0.45); }
+  heroTintB(color: string): string { return this.hexToRgba(color || '#1a7a3e', 0.3); }
+  heroTintSolidA(color: string): string { return this.shadeColor(color || '#1a7a3e', -0.6); }
+  heroTintSolidB(color: string): string { return color || '#1a7a3e'; }
+
+  private hexToRgba(hex: string, alpha: number): string {
+    const n = parseInt((hex || '#1a7a3e').replace('#', ''), 16);
+    const r = (n >> 16) & 0xff, g = (n >> 8) & 0xff, b = n & 0xff;
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  }
+
+  private shadeColor(hex: string, percent: number): string {
+    const n = parseInt((hex || '#1a7a3e').replace('#', ''), 16);
+    const clamp = (v: number) => Math.max(0, Math.min(255, v));
+    const r = clamp(((n >> 16) & 0xff) + Math.round(255 * percent));
+    const g = clamp(((n >> 8) & 0xff) + Math.round(255 * percent));
+    const b = clamp((n & 0xff) + Math.round(255 * percent));
+    return '#' + (0x1000000 + r * 0x10000 + g * 0x100 + b).toString(16).slice(1);
   }
 
   get galeriaNumVisible(): number {
@@ -72,7 +101,7 @@ export class Inicio implements OnInit, AfterViewInit, OnDestroy {
           if (config.subtituloBienvenida)
             this.siteConfig.subtituloBienvenida = config.subtituloBienvenida;
           if (Array.isArray(config.imagenesCarrusel) && config.imagenesCarrusel.length > 0)
-            this.siteConfig.imagenesCarrusel = config.imagenesCarrusel;
+            this.siteConfig.imagenesCarrusel = config.imagenesCarrusel.map(normalizarImagenCarrusel);
           if (Array.isArray(config.imagenesGaleria) && config.imagenesGaleria.length > 0)
             this.siteConfig.imagenesGaleria = config.imagenesGaleria;
           this.siteConfig.mostrarPopup = config.mostrarPopup ?? true;

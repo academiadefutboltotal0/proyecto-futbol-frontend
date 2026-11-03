@@ -30,51 +30,40 @@
 
 <!-- ========= HERO ========= -->
 <section class="hero-section">
-  <ng-container *ngIf="siteConfig.imagenesCarrusel.length > 1; else heroFallback">
-    <p-carousel
-      [value]="siteConfig.imagenesCarrusel"
-      [numVisible]="1"
-      [numScroll]="1"
-      [circular]="true"
-      [autoplayInterval]="5000"
-      [showNavigators]="true"
-      [showIndicators]="true"
-      styleClass="hero-carousel">
-      <ng-template let-img pTemplate="item">
-        <div class="hero-slide" [style.background-image]="'url(' + img + ')'">
-          <img [src]="img" alt="Imagen del club" />
-          <div class="hero-overlay">
-            <span class="hero-kicker">{{ siteConfig.kickerHero }}</span>
-            <ng-container *ngIf="configCargada; else heroSkeleton">
-              <h1 class="hero-title">{{ siteConfig.tituloBienvenida }}</h1>
-              <p class="hero-sub">{{ siteConfig.subtituloBienvenida }}</p>
-            </ng-container>
-            <ng-template #heroSkeleton>
-              <div class="sk sk-hero-title"></div>
-              <div class="sk sk-hero-sub"></div>
-            </ng-template>
-          </div>
+  <p-carousel
+    [value]="heroImages"
+    [numVisible]="1"
+    [numScroll]="1"
+    [circular]="heroImages.length > 1"
+    [autoplayInterval]="heroImages.length > 1 ? 5000 : 0"
+    [showNavigators]="heroImages.length > 1"
+    [showIndicators]="heroImages.length > 1"
+    styleClass="hero-carousel">
+    <ng-template let-img pTemplate="item">
+      <div
+        class="hero-slide"
+        [class.hero-slide-cover]="img.modo === 'cover'"
+        [class.hero-slide-noblur]="img.modo === 'contain' && !img.blur"
+        [style.background-image]="'url(' + img.url + ')'"
+        [style.--hero-tint-a]="heroTintA(img.color)"
+        [style.--hero-tint-b]="heroTintB(img.color)"
+        [style.--hero-tint-solid-a]="heroTintSolidA(img.color)"
+        [style.--hero-tint-solid-b]="heroTintSolidB(img.color)">
+        <img [src]="img.url" [style.object-position]="img.modo === 'cover' ? (img.posicion || '50% 50%') : null" alt="Imagen del club" />
+        <div class="hero-overlay">
+          <span class="hero-kicker">{{ siteConfig.kickerHero }}</span>
+          <ng-container *ngIf="configCargada; else heroSkeleton">
+            <h1 class="hero-title">{{ siteConfig.tituloBienvenida }}</h1>
+            <p class="hero-sub">{{ siteConfig.subtituloBienvenida }}</p>
+          </ng-container>
+          <ng-template #heroSkeleton>
+            <div class="sk sk-hero-title"></div>
+            <div class="sk sk-hero-sub"></div>
+          </ng-template>
         </div>
-      </ng-template>
-    </p-carousel>
-  </ng-container>
-
-  <ng-template #heroFallback>
-    <div class="hero-fallback" [style.background-image]="'url(' + imgDestacada + ')'">
-      <img [src]="imgDestacada" alt="Imagen destacada del club" />
-      <div class="hero-overlay">
-        <span class="hero-kicker">{{ siteConfig.kickerHero }}</span>
-        <ng-container *ngIf="configCargada; else heroSkeleton2">
-          <h1 class="hero-title">{{ siteConfig.tituloBienvenida }}</h1>
-          <p class="hero-sub">{{ siteConfig.subtituloBienvenida }}</p>
-        </ng-container>
-        <ng-template #heroSkeleton2>
-          <div class="sk sk-hero-title"></div>
-          <div class="sk sk-hero-sub"></div>
-        </ng-template>
       </div>
-    </div>
-  </ng-template>
+    </ng-template>
+  </p-carousel>
 </section>
 
 <!-- ========= SECTIONS NAV ========= -->

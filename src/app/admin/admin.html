@@ -635,16 +635,56 @@
       <div *ngIf="siteConfig.imagenesCarrusel.length === 0" style="color:rgba(233,247,234,0.35); font-style:italic;">
         No hay ninguna foto de portada todavía. Agrega la primera.
       </div>
-      <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:1rem;">
-        <div *ngFor="let img of siteConfig.imagenesCarrusel; let i = index" style="position:relative; border-radius:10px; overflow:hidden; border:1px solid rgba(57,211,83,0.2);">
-          <img [src]="img" alt="Imagen carrusel" style="width:100%; height:120px; object-fit:cover; display:block;" />
-          <button pButton type="button" icon="pi pi-trash" size="small" severity="danger"
-            style="position:absolute; top:0.4rem; right:0.4rem; opacity:0.9;"
-            (click)="eliminarImagenCarrusel(i)" pTooltip="Eliminar">
-          </button>
-          <span style="position:absolute; bottom:0.4rem; left:0.5rem; background:rgba(0,0,0,0.6); color:rgba(233,247,234,0.7); font-size:0.72rem; padding:0.15rem 0.4rem; border-radius:4px;">
-            {{ i + 1 }}
-          </span>
+      <div style="display:flex; flex-direction:column; gap:1.5rem;">
+        <div *ngFor="let img of siteConfig.imagenesCarrusel; let i = index"
+          style="border:1px solid rgba(57,211,83,0.2); border-radius:10px; padding:1rem; display:flex; flex-direction:column; gap:0.75rem;">
+
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-weight:600; font-size:0.85rem;">Foto {{ i + 1 }}</span>
+            <button pButton type="button" icon="pi pi-trash" size="small" severity="danger" [text]="true"
+              (click)="eliminarImagenCarrusel(i)" pTooltip="Eliminar"></button>
+          </div>
+
+          <!-- Vista previa: 21:9 como el hero real -->
+          <div
+            style="position:relative; width:100%; max-width:420px; aspect-ratio:21/9; border-radius:8px; overflow:hidden; touch-action:none;"
+            [style.cursor]="img.modo === 'cover' ? 'crosshair' : 'default'"
+            (mousedown)="img.modo === 'cover' && iniciarArrastreCarrusel(img, i, $event)"
+            (mousemove)="moverArrastreCarrusel(img, i, $event)"
+            (mouseup)="terminarArrastreCarrusel()"
+            (mouseleave)="terminarArrastreCarrusel()"
+            (touchstart)="img.modo === 'cover' && iniciarArrastreCarrusel(img, i, $event)"
+            (touchmove)="moverArrastreCarrusel(img, i, $event)"
+            (touchend)="terminarArrastreCarrusel()">
+            <img [src]="img.url" alt="Preview carrusel"
+              [style.object-fit]="img.modo === 'cover' ? 'cover' : 'contain'"
+              [style.object-position]="img.modo === 'cover' ? img.posicion : '50% 50%'"
+              [style.background]="img.modo === 'contain' ? img.color : 'transparent'"
+              style="width:100%; height:100%; display:block;" />
+            <div *ngIf="img.modo === 'cover'" [style.left]="posX(img.posicion)" [style.top]="posY(img.posicion)"
+              style="position:absolute; width:14px; height:14px; margin:-7px 0 0 -7px; border-radius:50%; border:2px solid #fff; background:rgba(22,163,74,.85); box-shadow:0 0 4px rgba(0,0,0,.4); pointer-events:none;"></div>
+          </div>
+          <small *ngIf="img.modo === 'cover'" style="opacity:0.6;">Clic o arrastra sobre la vista previa para elegir el encuadre.</small>
+
+          <div style="display:flex; flex-wrap:wrap; gap:1.5rem; align-items:center;">
+            <div style="display:flex; flex-direction:column; gap:0.35rem;">
+              <label style="font-size:0.78rem; opacity:0.7;">Cómo se muestra</label>
+              <div style="display:flex; gap:0.5rem;">
+                <p-button label="Ver completa" size="small" [severity]="img.modo === 'contain' ? 'success' : 'secondary'" (onClick)="img.modo = 'contain'"></p-button>
+                <p-button label="Rellenar pantalla" size="small" [severity]="img.modo === 'cover' ? 'success' : 'secondary'" (onClick)="img.modo = 'cover'"></p-button>
+              </div>
+            </div>
+
+            <div *ngIf="img.modo === 'contain'" style="display:flex; flex-direction:column; gap:0.35rem;">
+              <label style="font-size:0.78rem; opacity:0.7;">Fondo difuminado</label>
+              <p-togglebutton [(ngModel)]="img.blur" onLabel="Difuminado" offLabel="Sin difuminar" onIcon="pi pi-eye" offIcon="pi pi-eye-slash"></p-togglebutton>
+            </div>
+
+            <div *ngIf="img.modo === 'contain'" style="display:flex; flex-direction:column; gap:0.35rem;">
+              <label style="font-size:0.78rem; opacity:0.7;">Color del degradado de fondo</label>
+              <input type="color" [(ngModel)]="img.color" style="width:3rem; height:2.2rem; padding:0; border:1px solid rgba(57,211,83,0.25); border-radius:6px; cursor:pointer; background:transparent;" />
+            </div>
+          </div>
         </div>
       </div>
       <div style="margin-top:1.25rem; display:flex; justify-content:flex-end;">

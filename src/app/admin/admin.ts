@@ -21,6 +21,7 @@ import { environment } from '../../environments/environment';
 import { EstadoPago, Pago } from '../models/pago';
 import { PagosService } from '../services/pagos.service';
 import { AuthService } from '../services/auth.service';
+import { CarruselImg, normalizarImagenCarrusel } from '../models/carrusel';
 
 @Component({
   selector: 'app-admin',
@@ -208,7 +209,7 @@ export class AdminComponent implements OnInit {
     kickerHero: '',
     tituloBienvenida: '',
     subtituloBienvenida: '',
-    imagenesCarrusel: [] as string[],
+    imagenesCarrusel: [] as CarruselImg[],
     imagenesGaleria: [] as { url: string; descripcion: string }[],
     mostrarPopup: true,
     imagenPopup: '',
@@ -702,7 +703,7 @@ export class AdminComponent implements OnInit {
         this.siteConfig.kickerHero = c.kickerHero || 'Escuela Familias del Fútbol';
         this.siteConfig.tituloBienvenida = c.tituloBienvenida || '¡Bienvenidos Crack!';
         this.siteConfig.subtituloBienvenida = c.subtituloBienvenida || 'Revisa las últimas novedades de tu club.';
-        this.siteConfig.imagenesCarrusel = c.imagenesCarrusel || [];
+        this.siteConfig.imagenesCarrusel = (c.imagenesCarrusel || []).map(normalizarImagenCarrusel);
         this.siteConfig.imagenesGaleria = c.imagenesGaleria || [];
         this.siteConfig.mostrarPopup = c.mostrarPopup !== undefined ? c.mostrarPopup : true;
         this.siteConfig.imagenPopup = c.imagenPopup || '';
@@ -739,13 +740,45 @@ export class AdminComponent implements OnInit {
     const file = input.files?.[0];
     if (!file) return;
     const b64 = await this.comprimirImagen(file, 1920, 0.92);
-    this.siteConfig.imagenesCarrusel = [...this.siteConfig.imagenesCarrusel, b64];
+    this.siteConfig.imagenesCarrusel = [...this.siteConfig.imagenesCarrusel, {
+      url: b64, modo: 'contain', posicion: '50% 50%', blur: true, color: '#1a7a3e',
+    }];
     input.value = '';
   }
 
   eliminarImagenCarrusel(i: number) {
     this.siteConfig.imagenesCarrusel = this.siteConfig.imagenesCarrusel.filter((_, idx) => idx !== i);
   }
+
+  /* Arrastre para elegir el encuadre (solo aplica en modo "rellenar pantalla") */
+  arrastrandoCarruselIndex: number | null = null;
+
+  private ajustarPosicionCarrusel(img: CarruselImg, event: MouseEvent | TouchEvent): void {
+    const contenedor = (event.currentTarget as HTMLElement);
+    const rect = contenedor.getBoundingClientRect();
+    const punto = 'touches' in event ? event.touches[0] : event;
+    const x = Math.min(100, Math.max(0, ((punto.clientX - rect.left) / rect.width) * 100));
+    const y = Math.min(100, Math.max(0, ((punto.clientY - rect.top) / rect.height) * 100));
+    img.posicion = `${x.toFixed(0)}% ${y.toFixed(0)}%`;
+  }
+
+  iniciarArrastreCarrusel(img: CarruselImg, i: number, event: MouseEvent | TouchEvent): void {
+    this.arrastrandoCarruselIndex = i;
+    this.ajustarPosicionCarrusel(img, event);
+  }
+
+  moverArrastreCarrusel(img: CarruselImg, i: number, event: MouseEvent | TouchEvent): void {
+    if (this.arrastrandoCarruselIndex !== i) return;
+    event.preventDefault();
+    this.ajustarPosicionCarrusel(img, event);
+  }
+
+  terminarArrastreCarrusel(): void {
+    this.arrastrandoCarruselIndex = null;
+  }
+
+  posX(posicion: string): string { return posicion.split(' ')[0] || '50%'; }
+  posY(posicion: string): string { return posicion.split(' ')[1] || '50%'; }
 
   async agregarImagenGaleria(event: Event) {
     const input = event.target as HTMLInputElement;
