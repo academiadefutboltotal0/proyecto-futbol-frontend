@@ -11,6 +11,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { ToggleButtonModule } from 'primeng/togglebutton';
 import { TextareaModule } from 'primeng/textarea';
+import { EditorModule } from 'primeng/editor';
 import { ToastModule } from 'primeng/toast';
 import { ChartModule } from 'primeng/chart';
 import { MessageService } from 'primeng/api';
@@ -24,7 +25,7 @@ import { AuthService } from '../services/auth.service';
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [NgFor, NgIf, DatePipe, CurrencyPipe, FormsModule, TableModule, ButtonModule, CardModule, DialogModule, TagModule, InputTextModule, SelectModule, ToggleButtonModule, TextareaModule, ToastModule, ChartModule],
+  imports: [NgFor, NgIf, DatePipe, CurrencyPipe, FormsModule, TableModule, ButtonModule, CardModule, DialogModule, TagModule, InputTextModule, SelectModule, ToggleButtonModule, TextareaModule, EditorModule, ToastModule, ChartModule],
   providers: [MessageService],
   templateUrl: './admin.html',
   styleUrl: './admin.css'

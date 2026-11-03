@@ -287,8 +287,6 @@
       <span class="news-date">{{ noticiaSeleccionada.fecha | date:'dd/MM/yyyy' }}</span>
     </div>
     <h2 class="noticia-detalle-titulo">{{ noticiaSeleccionada.titulo }}</h2>
-    <p class="noticia-detalle-texto">
-      {{ noticiaSeleccionada.contenido || noticiaSeleccionada.descripcion }}
-    </p>
+    <div class="noticia-detalle-texto" [innerHTML]="noticiaSeleccionada.contenido || noticiaSeleccionada.descripcion"></div>
   </div>
 </p-dialog>

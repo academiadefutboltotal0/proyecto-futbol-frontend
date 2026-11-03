@@ -1377,8 +1377,7 @@
 
     <div style="display:flex; flex-direction:column; gap:0.25rem;">
       <label style="font-weight:600;">Contenido completo <small style="font-weight:400;">(se muestra al hacer "Leer más")</small></label>
-      <textarea [(ngModel)]="noticiaForm.contenido" rows="5"
-        style="width:100%; padding:0.5rem; border:1px solid rgba(57,211,83,0.22); border-radius:6px; font-family:inherit; font-size:1rem; resize:vertical;"></textarea>
+      <p-editor [(ngModel)]="noticiaForm.contenido" [style]="{ height: '220px' }"></p-editor>
     </div>
 
     <div style="display:flex; flex-direction:column; gap:0.25rem;">
