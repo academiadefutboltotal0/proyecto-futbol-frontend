@@ -88,48 +88,74 @@
           <div class="campo">
             <label>Posición en la cancha</label>
             <p-select [options]="posiciones" optionLabel="name" formControlName="posicion"
-              placeholder="Seleccione posición" appendTo="body"></p-select>
+              placeholder="Seleccione posición" appendTo="body"
+              [ngClass]="{'ng-invalid ng-dirty': campoInvalido('posicion')}"></p-select>
+            <small *ngIf="campoInvalido('posicion')" class="error">Selecciona una posición</small>
           </div>
 
           <div class="campo">
             <label>Pie hábil</label>
             <p-select [options]="pies" optionLabel="name" formControlName="pieHabil"
-              placeholder="Seleccione pie" appendTo="body"></p-select>
+              placeholder="Seleccione pie" appendTo="body"
+              [ngClass]="{'ng-invalid ng-dirty': campoInvalido('pieHabil')}"></p-select>
+            <small *ngIf="campoInvalido('pieHabil')" class="error">Selecciona el pie hábil</small>
           </div>
 
           <div class="campo">
             <label>Talla</label>
-            <input pInputText formControlName="talla" placeholder="Ej: 1.65 m" />
+            <input pInputText formControlName="talla" placeholder="Ej: 1.65 m"
+              [ngClass]="{'input-error': campoInvalido('talla')}" />
+            <small *ngIf="campoInvalido('talla')" class="error">La talla es obligatoria</small>
           </div>
 
           <div class="campo">
             <label>Nombre en camiseta</label>
-            <input pInputText formControlName="nombreCamiseta" />
+            <input pInputText formControlName="nombreCamiseta"
+              [ngClass]="{'input-error': campoInvalido('nombreCamiseta')}" />
+            <small *ngIf="campoInvalido('nombreCamiseta')" class="error">El nombre en camiseta es obligatorio</small>
           </div>
 
           <div class="campo">
-            <label>Números favoritos</label>
-            <input pInputText formControlName="numerosFavoritos" placeholder="Ej: 7, 10, 11" />
+            <label>Números favoritos <small>(si no tiene, escribe "ninguno")</small></label>
+            <input pInputText formControlName="numerosFavoritos" placeholder="Ej: 7, 10, 11"
+              [ngClass]="{'input-error': campoInvalido('numerosFavoritos')}" />
+            <small *ngIf="campoInvalido('numerosFavoritos')" class="error">Este campo es obligatorio</small>
           </div>
 
           <div class="campo">
-            <label>Años jugando fútbol</label>
-            <input pInputText formControlName="aniosJugando" type="number" min="0" />
+            <label>Años jugando fútbol <small>(si recién empieza, escribe 0)</small></label>
+            <input pInputText formControlName="aniosJugando" type="number" min="0"
+              [ngClass]="{'input-error': campoInvalido('aniosJugando')}" />
+            <small *ngIf="campoInvalido('aniosJugando')" class="error">Este campo es obligatorio</small>
           </div>
 
           <div class="campo">
             <label>Establecimiento educacional</label>
-            <input pInputText formControlName="establecimiento" />
+            <input pInputText formControlName="establecimiento"
+              [ngClass]="{'input-error': campoInvalido('establecimiento')}" />
+            <small *ngIf="campoInvalido('establecimiento')" class="error">El establecimiento es obligatorio</small>
           </div>
 
           <div class="campo">
             <label>Curso</label>
-            <input pInputText formControlName="curso" />
+            <input pInputText formControlName="curso"
+              [ngClass]="{'input-error': campoInvalido('curso')}" />
+            <small *ngIf="campoInvalido('curso')" class="error">El curso es obligatorio</small>
           </div>
 
           <div class="campo">
-            <label>Club amateur</label>
-            <input pInputText formControlName="clubAmateur" />
+            <label>Club amateur <small>(si no tiene, escribe "ninguno")</small></label>
+            <input pInputText formControlName="clubAmateur"
+              [ngClass]="{'input-error': campoInvalido('clubAmateur')}" />
+            <small *ngIf="campoInvalido('clubAmateur')" class="error">Este campo es obligatorio</small>
+          </div>
+
+          <div class="campo">
+            <label>Actitud social</label>
+            <p-select [options]="actitudSocialOpciones" optionLabel="name" formControlName="actitudSocial"
+              placeholder="Seleccione una opción" appendTo="body"
+              [ngClass]="{'ng-invalid ng-dirty': campoInvalido('actitudSocial')}"></p-select>
+            <small *ngIf="campoInvalido('actitudSocial')" class="error">Selecciona una opción</small>
           </div>
 
           <div class="campo">
@@ -181,13 +207,15 @@
         <div formGroupName="horarioSalidaColegio" class="grid">
           <div class="campo" *ngFor="let d of diasSemana">
             <label>{{ d.label }}</label>
-            <input pInputText type="time" [formControlName]="d.dia" />
+            <input pInputText type="time" [formControlName]="d.dia"
+              [ngClass]="{'input-error': horarioColegioInvalido() && !sinColegio[d.dia] && !formulario.get('horarioSalidaColegio.' + d.dia)?.value}" />
             <label style="display:flex; align-items:center; gap:0.4rem; font-weight:400; margin-top:0.3rem;">
               <input type="checkbox" [(ngModel)]="sinColegio[d.dia]" [ngModelOptions]="{standalone:true}" (change)="toggleSinColegio(d.dia)" />
               No tiene colegio ese día
             </label>
           </div>
         </div>
+        <small *ngIf="horarioColegioInvalido()" class="error">Completa la hora de cada día, o marca "No tiene colegio ese día" si corresponde.</small>
       </div>
 
       <!-- APODERADO -->
@@ -213,12 +241,14 @@
             <label>WhatsApp</label>
             <input pInputText formControlName="whatsapp" placeholder="+56 9 1234 5678"
               [ngClass]="{'input-error': campoApoderadoInvalido('whatsapp')}" />
-            <small *ngIf="campoApoderadoInvalido('whatsapp')" class="error">El número no es válido, revísalo (ej: +56 9 1234 5678)</small>
+            <small *ngIf="campoApoderadoInvalido('whatsapp')" class="error">Ingresa un WhatsApp válido (ej: +56 9 1234 5678)</small>
           </div>
 
           <div class="campo">
             <label>Vínculo con el jugador</label>
-            <input pInputText formControlName="vinculo" placeholder="Ej: Padre, Madre, Tutor" />
+            <input pInputText formControlName="vinculo" placeholder="Ej: Padre, Madre, Tutor"
+              [ngClass]="{'input-error': campoApoderadoInvalido('vinculo')}" />
+            <small *ngIf="campoApoderadoInvalido('vinculo')" class="error">Este campo es obligatorio</small>
           </div>
 
         </div>

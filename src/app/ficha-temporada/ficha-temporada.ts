@@ -103,6 +103,18 @@ export class FichaTemporadaComponent implements OnInit {
     if (this.sinColegio[dia]) {
       this.formulario.get(`horarioSalidaColegio.${dia}`)?.setValue('');
     }
+    this.formulario.get('horarioSalidaColegio')?.updateValueAndValidity();
+  }
+
+  /* Cada dia debe traer una hora O estar marcado "no tiene colegio ese dia" */
+  validarHorarioColegio(grupo: AbstractControl): ValidationErrors | null {
+    const faltante = this.diasSemana.some(d => !this.sinColegio[d.dia] && !grupo.get(d.dia)?.value);
+    return faltante ? { horarioIncompleto: true } : null;
+  }
+
+  horarioColegioInvalido(): boolean {
+    const grupo = this.formulario.get('horarioSalidaColegio');
+    return !!(grupo?.hasError('horarioIncompleto') && grupo?.touched);
   }
 
   token = '';
@@ -123,6 +135,12 @@ export class FichaTemporadaComponent implements OnInit {
     { name: 'Derecho' },
     { name: 'Izquierdo' },
     { name: 'Ambidiestro' }
+  ];
+
+  actitudSocialOpciones = [
+    { name: 'Introvertido' },
+    { name: 'Extrovertido' },
+    { name: 'Mixto' }
   ];
 
   sedesOpciones: { label: string; value: string }[] = [
@@ -146,18 +164,18 @@ export class FichaTemporadaComponent implements OnInit {
       apellido:        ['', Validators.required],
       cedula:          ['', [Validators.required, rutValidator()]],
       fechaNacimiento: ['', Validators.required],
-      posicion:        [null],
-      pieHabil:        [null],
-      talla:           [''],
-      nombreCamiseta:  [''],
-      numerosFavoritos:[''],
-      aniosJugando:    [''],
-      establecimiento: [''],
-      curso:           [''],
-      clubAmateur:     [''],
+      posicion:        [null, Validators.required],
+      pieHabil:        [null, Validators.required],
+      talla:           ['', Validators.required],
+      nombreCamiseta:  ['', Validators.required],
+      numerosFavoritos:['', Validators.required],
+      aniosJugando:    ['', Validators.required],
+      establecimiento: ['', Validators.required],
+      curso:           ['', Validators.required],
+      clubAmateur:     ['', Validators.required],
       equipoPreferido: ['', Validators.required],
       jugadorReferente:['', Validators.required],
-      actitudSocial:   [''],
+      actitudSocial:   [null, Validators.required],
       direccion:       ['', Validators.required],
       ciudad:          ['', Validators.required],
       sede:            ['', Validators.required],
@@ -170,13 +188,13 @@ export class FichaTemporadaComponent implements OnInit {
         viernes:   [''],
         sabado:    [''],
         domingo:   [''],
-      }),
+      }, { validators: this.validarHorarioColegio.bind(this) }),
 
       apoderado: this.fb.group({
         nombre:  ['', Validators.required],
         correo:  ['', [Validators.required, Validators.email]],
-        whatsapp:['', whatsappValidator()],
-        vinculo: ['']
+        whatsapp:['', [Validators.required, whatsappValidator()]],
+        vinculo: ['', Validators.required]
       })
     });
 
@@ -295,6 +313,7 @@ export class FichaTemporadaComponent implements OnInit {
       ...this.formulario.value,
       posicion: this.formulario.value.posicion?.name || '',
       pieHabil: this.formulario.value.pieHabil?.name || '',
+      actitudSocial: this.formulario.value.actitudSocial?.name || '',
       invitacionToken: this.token
     };
 
