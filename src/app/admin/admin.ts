@@ -217,6 +217,7 @@ export class AdminComponent implements OnInit {
     cuerpoPopup: '',
     sedes: [] as string[],
     horariosPorSede: [] as { sede: string; horarios: string[] }[],
+    whatsappPorSede: [] as { sede: string; link: string }[],
   };
   nuevaSede = '';
   nuevoHorarioTexto: { [sede: string]: string } = {};
@@ -711,6 +712,7 @@ export class AdminComponent implements OnInit {
         this.siteConfig.cuerpoPopup = c.cuerpoPopup || '';
         this.siteConfig.sedes = c.sedes?.length ? c.sedes : ['Viña del Mar', 'Olmué'];
         this.siteConfig.horariosPorSede = c.horariosPorSede || [];
+        this.siteConfig.whatsappPorSede = c.whatsappPorSede || [];
       },
       error: () => {},
     });
@@ -856,7 +858,26 @@ export class AdminComponent implements OnInit {
     const nombre = this.siteConfig.sedes[i];
     this.siteConfig.sedes = this.siteConfig.sedes.filter((_, idx) => idx !== i);
     this.siteConfig.horariosPorSede = this.siteConfig.horariosPorSede.filter(h => h.sede !== nombre);
-    this.putConfig({ sedes: this.siteConfig.sedes, horariosPorSede: this.siteConfig.horariosPorSede });
+    this.siteConfig.whatsappPorSede = this.siteConfig.whatsappPorSede.filter(w => w.sede !== nombre);
+    this.putConfig({ sedes: this.siteConfig.sedes, horariosPorSede: this.siteConfig.horariosPorSede, whatsappPorSede: this.siteConfig.whatsappPorSede });
+  }
+
+  whatsappDeSede(sede: string): string {
+    return this.siteConfig.whatsappPorSede.find(w => w.sede === sede)?.link || '';
+  }
+
+  actualizarWhatsapp(sede: string, link: string): void {
+    let entry = this.siteConfig.whatsappPorSede.find(w => w.sede === sede);
+    if (!entry) {
+      entry = { sede, link };
+      this.siteConfig.whatsappPorSede = [...this.siteConfig.whatsappPorSede, entry];
+    } else {
+      entry.link = link;
+    }
+  }
+
+  guardarWhatsapp(): void {
+    this.putConfig({ whatsappPorSede: this.siteConfig.whatsappPorSede });
   }
 
   horariosDeSede(sede: string): string[] {

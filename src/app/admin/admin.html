@@ -792,6 +792,13 @@
               <p-button label="Agregar horario" icon="pi pi-plus" size="small" severity="secondary"
                 (onClick)="agregarHorario(sede)" [disabled]="!nuevoHorarioTexto[sede]?.trim()"></p-button>
             </div>
+
+            <div style="display:flex; align-items:center; gap:0.5rem; margin-top:0.5rem;">
+              <i class="pi pi-whatsapp" style="font-size:0.8rem; opacity:0.6; color:#25D366;"></i>
+              <input pInputText [ngModel]="whatsappDeSede(sede)" (ngModelChange)="actualizarWhatsapp(sede, $event)"
+                placeholder="Link del grupo de WhatsApp de esta sede"
+                style="flex:1; font-size:0.85rem;" (blur)="guardarWhatsapp()" />
+            </div>
           </div>
         </div>
         <div *ngIf="siteConfig.sedes.length === 0" style="color:rgba(233,247,234,0.35); font-style:italic;">
